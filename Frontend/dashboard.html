@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Bhimson's Agro Park</title>
+    <meta name="description" content="Manage your bookings at Bhimson's Agro Park.">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="header" id="header">
+        <nav class="nav container">
+            <div class="nav-brand">
+                <a href="index.html"><h1 class="logo">BHIMSON'S AGRO PARK</h1></a>
+            </div>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html#adventures" class="nav-link">ADVENTURES</a></li>
+                <li><a href="index.html#passes" class="nav-link">PASSES</a></li>
+                <li><a href="index.html#about" class="nav-link">ABOUT</a></li>
+                <li><a href="index.html#contact" class="nav-link">CONTACT</a></li>
+            </ul>
+            
+            <div class="nav-actions" id="navActions"></div>
+            
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="page-container">
+        <div class="page-content">
+            <div class="container">
+                <div class="dashboard-grid">
+                    <!-- Sidebar -->
+                    <aside class="dashboard-sidebar">
+                        <div class="sidebar-profile">
+                            <div class="sidebar-avatar" id="userAvatar">U</div>
+                            <h3 class="sidebar-name" id="userName">Loading...</h3>
+                            <p class="sidebar-email" id="userEmail">...</p>
+                        </div>
+                        
+                        <nav class="sidebar-nav">
+                            <a href="#bookings" class="sidebar-link active" data-section="bookings">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                My Bookings
+                            </a>
+                            <a href="#profile" class="sidebar-link" data-section="profile">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                Profile Settings
+                            </a>
+                            <a href="select-pass.html" class="sidebar-link">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                                </svg>
+                                New Booking
+                            </a>
+                        </nav>
+                    </aside>
+                    
+                    <!-- Main Content Area -->
+                    <div class="dashboard-main">
+                        <!-- Bookings Section -->
+                        <section id="bookingsSection" class="dashboard-section">
+                            <h2 class="page-title" style="font-size: var(--text-3xl); margin-bottom: var(--space-6);">MY BOOKINGS</h2>
+                            
+                            <!-- Tabs -->
+                            <div class="tabs">
+                                <button class="tab-btn active" data-tab="upcoming">Upcoming</button>
+                                <button class="tab-btn" data-tab="past">Past</button>
+                                <button class="tab-btn" data-tab="cancelled">Cancelled</button>
+                            </div>
+                            
+                            <!-- Tab Contents -->
+                            <div class="tab-content active" id="upcomingTab">
+                                <div class="bookings-list" id="upcomingBookings">
+                                    <div style="text-align: center; padding: var(--space-8);">
+                                        <div class="spinner"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-content" id="pastTab">
+                                <div class="bookings-list" id="pastBookings"></div>
+                            </div>
+                            
+                            <div class="tab-content" id="cancelledTab">
+                                <div class="bookings-list" id="cancelledBookings"></div>
+                            </div>
+                        </section>
+                        
+                        <!-- Profile Section -->
+                        <section id="profileSection" class="dashboard-section" style="display: none;">
+                            <h2 class="page-title" style="font-size: var(--text-3xl); margin-bottom: var(--space-6);">PROFILE SETTINGS</h2>
+                            
+                            <div class="booking-form-card" style="max-width: 600px;">
+                                <form id="profileForm" class="auth-form">
+                                    <div class="form-group">
+                                        <label class="form-label" for="profileName">Full Name</label>
+                                        <input type="text" id="profileName" class="form-input" placeholder="Your full name">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label" for="profileEmail">Email Address</label>
+                                        <input type="email" id="profileEmail" class="form-input" disabled>
+                                        <small style="color: var(--color-text-muted);">Email cannot be changed</small>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label" for="profilePhone">Phone Number</label>
+                                        <input type="tel" id="profilePhone" class="form-input" placeholder="Your phone number">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label" for="profileDob">Date of Birth</label>
+                                        <input type="date" id="profileDob" class="form-input">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label" for="profileAddress">Address</label>
+                                        <textarea id="profileAddress" class="form-input" rows="3" placeholder="Your address"></textarea>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label" for="profileEmergency">Emergency Contact</label>
+                                        <input type="tel" id="profileEmergency" class="form-input" placeholder="Emergency contact number">
+                                    </div>
+                                    
+                                    <button type="submit" class="auth-btn" id="saveProfileBtn">
+                                        SAVE CHANGES
+                                    </button>
+                                </form>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- JavaScript Files -->
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/booking.js"></script>
+    <script src="js/payment.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check authentication
+            const isAuth = await requireAuth('login.html');
+            if (!isAuth) return;
+            
+            // Load user profile
+            await loadUserProfile();
+            
+            // Load bookings
+            await loadAllBookings();
+            
+            // Tab functionality
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tab = this.dataset.tab;
+                    
+                    // Update active tab
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show tab content
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById(tab + 'Tab').classList.add('active');
+                });
+            });
+            
+            // Sidebar navigation
+            document.querySelectorAll('.sidebar-link[data-section]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    
+                    // Update active link
+                    document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show section
+                    document.querySelectorAll('.dashboard-section').forEach(s => s.style.display = 'none');
+                    document.getElementById(section + 'Section').style.display = 'block';
+                });
+            });
+            
+            // Profile form
+            document.getElementById('profileForm').addEventListener('submit', handleProfileUpdate);
+        });
+        
+        async function loadUserProfile() {
+            const profile = await getUserProfile();
+            
+            if (profile) {
+                document.getElementById('userAvatar').textContent = profile.full_name?.charAt(0) || 'U';
+                document.getElementById('userName').textContent = profile.full_name || 'User';
+                document.getElementById('userEmail').textContent = profile.email;
+                
+                // Fill profile form
+                document.getElementById('profileName').value = profile.full_name || '';
+                document.getElementById('profileEmail').value = profile.email || '';
+                document.getElementById('profilePhone').value = profile.phone || '';
+                document.getElementById('profileDob').value = profile.date_of_birth || '';
+                document.getElementById('profileAddress').value = profile.address || '';
+                document.getElementById('profileEmergency').value = profile.emergency_contact || '';
+            }
+        }
+        
+        async function loadAllBookings() {
+            // Load upcoming bookings
+            const upcomingResult = await getUpcomingBookings();
+            renderBookings('upcomingBookings', upcomingResult.bookings || [], 'upcoming');
+            
+            // Load past bookings
+            const pastResult = await getPastBookings();
+            renderBookings('pastBookings', pastResult.bookings || [], 'past');
+            
+            // Load cancelled bookings
+            const cancelledResult = await fetchUserBookings('cancelled');
+            renderBookings('cancelledBookings', cancelledResult.bookings || [], 'cancelled');
+        }
+        
+        function renderBookings(containerId, bookings, type) {
+            const container = document.getElementById(containerId);
+            
+            if (bookings.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <h3>No ${type} bookings</h3>
+                        <p>${type === 'upcoming' ? 'Book your next adventure now!' : 'Your ' + type + ' bookings will appear here.'}</p>
+                        ${type === 'upcoming' ? '<a href="select-pass.html" class="btn-primary">BOOK NOW</a>' : ''}
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = bookings.map(booking => `
+                <div class="booking-card">
+                    <div class="booking-info">
+                        <h3>${booking.passes?.name || 'Pass'}</h3>
+                        <div class="booking-details">
+                            <span class="booking-detail">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                ${formatDate(booking.visit_date, { weekday: 'short' })}
+                            </span>
+                            <span class="booking-detail">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                ${booking.num_adults} Adult${booking.num_adults > 1 ? 's' : ''}${booking.num_children > 0 ? `, ${booking.num_children} Child${booking.num_children > 1 ? 'ren' : ''}` : ''}
+                            </span>
+                            <span class="booking-detail">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                                ${booking.booking_number}
+                            </span>
+                        </div>
+                        <span class="booking-status ${booking.status}">${booking.status.toUpperCase()}</span>
+                    </div>
+                    <div class="booking-actions">
+                        <span class="booking-amount">₹${booking.total_amount.toLocaleString('en-IN')}</span>
+                        <div class="booking-action-btns">
+                            ${type === 'upcoming' && booking.status === 'confirmed' ? `
+                                <button class="btn-outline btn-sm" onclick="downloadTicket('${booking.id}')">
+                                    Download Ticket
+                                </button>
+                                <button class="btn-outline btn-sm" onclick="handleCancelBooking('${booking.id}')" style="color: #DC3545; border-color: #DC3545;">
+                                    Cancel
+                                </button>
+                            ` : ''}
+                            ${type === 'past' ? `
+                                <button class="btn-outline btn-sm" onclick="downloadTicket('${booking.id}')">
+                                    Download Ticket
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function handleCancelBooking(bookingId) {
+            const confirmed = await showConfirmModal({
+                title: 'Cancel Booking',
+                message: 'Are you sure you want to cancel this booking? This action cannot be undone.',
+                confirmText: 'Yes, Cancel',
+                cancelText: 'No, Keep It',
+                isDangerous: true
+            });
+            
+            if (confirmed) {
+                const result = await cancelBooking(bookingId, 'Cancelled by user');
+                
+                if (result.success) {
+                    showToast('Booking cancelled successfully', 'success');
+                    await loadAllBookings();
+                } else {
+                    showToast(result.error || 'Failed to cancel booking', 'error');
+                }
+            }
+        }
+        
+        async function handleProfileUpdate(e) {
+            e.preventDefault();
+            
+            const profileData = {
+                full_name: document.getElementById('profileName').value.trim(),
+                phone: document.getElementById('profilePhone').value.trim(),
+                date_of_birth: document.getElementById('profileDob').value || null,
+                address: document.getElementById('profileAddress').value.trim() || null,
+                emergency_contact: document.getElementById('profileEmergency').value.trim() || null
+            };
+            
+            const saveBtn = document.getElementById('saveProfileBtn');
+            showLoading(saveBtn, 'Saving...');
+            
+            const result = await updateProfile(profileData);
+            
+            if (result.success) {
+                showToast('Profile updated successfully', 'success');
+                await loadUserProfile();
+            } else {
+                showToast(result.error || 'Failed to update profile', 'error');
+            }
+            
+            hideLoading(saveBtn);
+        }
+    </script>
+</body>
+</html>

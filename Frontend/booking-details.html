@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details - Bhimson's Agro Park</title>
+    <meta name="description" content="Complete your booking at Bhimson's Agro Park.">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="header" id="header">
+        <nav class="nav container">
+            <div class="nav-brand">
+                <a href="index.html"><h1 class="logo">BHIMSON'S AGRO PARK</h1></a>
+            </div>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html#adventures" class="nav-link">ADVENTURES</a></li>
+                <li><a href="index.html#passes" class="nav-link">PASSES</a></li>
+                <li><a href="index.html#about" class="nav-link">ABOUT</a></li>
+                <li><a href="index.html#contact" class="nav-link">CONTACT</a></li>
+            </ul>
+            
+            <div class="nav-actions" id="navActions"></div>
+            
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="page-container">
+        <div class="page-content">
+            <div class="container">
+                <div class="page-header">
+                    <div class="breadcrumb">
+                        <a href="index.html">Home</a>
+                        <span>/</span>
+                        <a href="select-pass.html">Select Pass</a>
+                        <span>/</span>
+                        <span>Booking Details</span>
+                    </div>
+                    <h1 class="page-title">COMPLETE YOUR BOOKING</h1>
+                    <p class="page-subtitle">Fill in the details for your adventure</p>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 400px; gap: var(--space-8); align-items: start;">
+                    <!-- Booking Form -->
+                    <div class="booking-form-card">
+                        <h2 style="font-family: var(--font-display); font-size: var(--text-2xl); margin-bottom: var(--space-6);">BOOKING DETAILS</h2>
+                        
+                        <form id="bookingForm" class="auth-form">
+                            <div class="form-group">
+                                <label class="form-label" for="visitDate">Visit Date *</label>
+                                <input 
+                                    type="date" 
+                                    id="visitDate" 
+                                    class="form-input" 
+                                    required
+                                >
+                                <span class="form-error" id="visitDateError"></span>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="numAdults">Number of Adults *</label>
+                                    <input 
+                                        type="number" 
+                                        id="numAdults" 
+                                        class="form-input" 
+                                        min="1" 
+                                        max="20" 
+                                        value="1"
+                                        required
+                                    >
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="numChildren">Number of Children (Below 12)</label>
+                                    <input 
+                                        type="number" 
+                                        id="numChildren" 
+                                        class="form-input" 
+                                        min="0" 
+                                        max="20" 
+                                        value="0"
+                                    >
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="specialRequests">Special Requests (Optional)</label>
+                                <textarea 
+                                    id="specialRequests" 
+                                    class="form-input" 
+                                    rows="3"
+                                    placeholder="Any special requests or requirements..."
+                                ></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="dietaryPreferences">Dietary Preferences (Optional)</label>
+                                <input 
+                                    type="text" 
+                                    id="dietaryPreferences" 
+                                    class="form-input" 
+                                    placeholder="Vegetarian, Vegan, Allergies, etc."
+                                >
+                            </div>
+                            
+                            <button type="submit" class="auth-btn" id="proceedBtn">
+                                PROCEED TO PAYMENT
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Booking Summary -->
+                    <div class="booking-form-card" style="position: sticky; top: var(--space-8);">
+                        <h2 style="font-family: var(--font-display); font-size: var(--text-xl); margin-bottom: var(--space-4);">BOOKING SUMMARY</h2>
+                        
+                        <div id="passSummary">
+                            <!-- Pass details will be loaded here -->
+                        </div>
+                        
+                        <div class="booking-summary" id="priceSummary">
+                            <!-- Price summary will be updated here -->
+                        </div>
+                        
+                        <p style="font-size: var(--text-xs); color: var(--color-text-muted); text-align: center;">
+                            By proceeding, you agree to our Terms & Conditions and Cancellation Policy
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- JavaScript Files -->
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/booking.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        let selectedPass = null;
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check authentication
+            const isAuth = await requireAuth('login.html');
+            if (!isAuth) return;
+            
+            // Get selected pass
+            selectedPass = getSelectedPass();
+            if (!selectedPass) {
+                redirectTo('select-pass.html', 'Please select a pass first', 'warning');
+                return;
+            }
+            
+            // Setup date picker
+            const visitDateInput = document.getElementById('visitDate');
+            visitDateInput.min = getMinBookingDate();
+            visitDateInput.max = getMaxBookingDate();
+            
+            // Load pass summary
+            loadPassSummary();
+            updatePriceSummary();
+            
+            // Update price on guest count change
+            document.getElementById('numAdults').addEventListener('change', updatePriceSummary);
+            document.getElementById('numChildren').addEventListener('change', updatePriceSummary);
+            
+            // Form submission
+            document.getElementById('bookingForm').addEventListener('submit', handleBookingSubmit);
+        });
+        
+        function loadPassSummary() {
+            const passSummary = document.getElementById('passSummary');
+            passSummary.innerHTML = `
+                <div style="background: var(--color-bg-dark); padding: var(--space-4); border-radius: var(--radius-md); margin-bottom: var(--space-4);">
+                    <h3 style="font-family: var(--font-display); color: var(--color-primary); margin-bottom: var(--space-2);">
+                        ${selectedPass.name.toUpperCase()}
+                    </h3>
+                    <p style="font-size: var(--text-sm); color: var(--color-text-muted);">
+                        ${selectedPass.description}
+                    </p>
+                </div>
+            `;
+        }
+        
+        function updatePriceSummary() {
+            const numAdults = parseInt(document.getElementById('numAdults').value) || 1;
+            const numChildren = parseInt(document.getElementById('numChildren').value) || 0;
+            
+            const totals = calculateBookingTotal(selectedPass.price, numAdults, numChildren);
+            
+            const priceSummary = document.getElementById('priceSummary');
+            priceSummary.innerHTML = `
+                <div class="summary-row">
+                    <span class="label">Adult × ${numAdults}</span>
+                    <span class="value">₹${totals.adultTotal.toLocaleString('en-IN')}</span>
+                </div>
+                ${numChildren > 0 ? `
+                <div class="summary-row">
+                    <span class="label">Child × ${numChildren} (50% off)</span>
+                    <span class="value">₹${totals.childTotal.toLocaleString('en-IN')}</span>
+                </div>
+                ` : ''}
+                <div class="summary-row">
+                    <span class="label">Subtotal</span>
+                    <span class="value">₹${totals.subtotal.toLocaleString('en-IN')}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="label">GST (${CONFIG.TAX_PERCENTAGE}%)</span>
+                    <span class="value">₹${totals.tax.toLocaleString('en-IN')}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="label">Convenience Fee</span>
+                    <span class="value">₹${totals.convenienceFee.toLocaleString('en-IN')}</span>
+                </div>
+                <div class="summary-row total">
+                    <span class="label">Total Amount</span>
+                    <span class="value">₹${totals.total.toLocaleString('en-IN')}</span>
+                </div>
+            `;
+        }
+        
+        async function handleBookingSubmit(e) {
+            e.preventDefault();
+            
+            const visitDate = document.getElementById('visitDate').value;
+            const numAdults = parseInt(document.getElementById('numAdults').value) || 1;
+            const numChildren = parseInt(document.getElementById('numChildren').value) || 0;
+            const specialRequests = document.getElementById('specialRequests').value.trim();
+            const dietaryPreferences = document.getElementById('dietaryPreferences').value.trim();
+            
+            // Validation
+            if (!visitDate) {
+                document.getElementById('visitDateError').textContent = 'Please select a visit date';
+                document.getElementById('visitDateError').classList.add('show');
+                return;
+            }
+            
+            if (!isValidBookingDate(visitDate)) {
+                document.getElementById('visitDateError').textContent = 'Please select a valid date within the booking window';
+                document.getElementById('visitDateError').classList.add('show');
+                return;
+            }
+            
+            const proceedBtn = document.getElementById('proceedBtn');
+            showLoading(proceedBtn, 'Creating booking...');
+            
+            try {
+                const bookingData = {
+                    pass_id: selectedPass.id,
+                    visit_date: visitDate,
+                    num_adults: numAdults,
+                    num_children: numChildren,
+                    special_requests: specialRequests || null,
+                    dietary_preferences: dietaryPreferences || null
+                };
+                
+                const result = await createBooking(bookingData);
+                
+                if (result.success) {
+                    // Store booking for payment page
+                    storeLocal('pending_booking', result.booking);
+                    storeLocal('booking_totals', result.totals);
+                    
+                    // Clear selected pass
+                    clearSelectedPass();
+                    
+                    // Redirect to payment
+                    window.location.href = 'payment.html';
+                } else {
+                    showToast(result.error || 'Failed to create booking', 'error');
+                    hideLoading(proceedBtn);
+                }
+            } catch (error) {
+                showToast('An error occurred. Please try again.', 'error');
+                hideLoading(proceedBtn);
+            }
+        }
+    </script>
+    
+    <style>
+        @media (max-width: 900px) {
+            div[style*="grid-template-columns: 1fr 400px"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+</body>
+</html>

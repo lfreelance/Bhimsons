@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Pass - Bhimson's Agro Park</title>
+    <meta name="description" content="Choose your adventure pass at Bhimson's Agro Park.">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="header" id="header">
+        <nav class="nav container">
+            <div class="nav-brand">
+                <a href="index.html"><h1 class="logo">BHIMSON'S AGRO PARK</h1></a>
+            </div>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html#adventures" class="nav-link">ADVENTURES</a></li>
+                <li><a href="index.html#passes" class="nav-link">PASSES</a></li>
+                <li><a href="index.html#about" class="nav-link">ABOUT</a></li>
+                <li><a href="index.html#contact" class="nav-link">CONTACT</a></li>
+            </ul>
+            
+            <div class="nav-actions" id="navActions">
+                <!-- Will be populated by JS -->
+            </div>
+            
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="page-container">
+        <div class="page-content">
+            <div class="container">
+                <div class="page-header">
+                    <div class="breadcrumb">
+                        <a href="index.html">Home</a>
+                        <span>/</span>
+                        <span>Select Pass</span>
+                    </div>
+                    <h1 class="page-title">CHOOSE YOUR ADVENTURE</h1>
+                    <p class="page-subtitle">Select a pass that suits your adventure needs</p>
+                </div>
+                
+                <!-- Pass Selection Grid -->
+                <div class="pass-selection-grid" id="passGrid">
+                    <!-- Passes will be loaded here -->
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading passes...</p>
+                    </div>
+                </div>
+                
+                <!-- Continue Button -->
+                <div style="text-align: center; margin-top: var(--space-8);">
+                    <button class="btn-primary btn-large" id="continueBtn" disabled>
+                        CONTINUE TO BOOKING
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- JavaScript Files -->
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/booking.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        let selectedPass = null;
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check authentication
+            const isAuth = await requireAuth('login.html');
+            if (!isAuth) return;
+            
+            // Load passes
+            await loadPasses();
+            
+            // Continue button
+            document.getElementById('continueBtn').addEventListener('click', function() {
+                if (selectedPass) {
+                    selectPass(selectedPass);
+                    window.location.href = 'booking-details.html';
+                }
+            });
+        });
+        
+        async function loadPasses() {
+            const passGrid = document.getElementById('passGrid');
+            
+            try {
+                const result = await fetchPasses();
+                
+                if (!result.success) {
+                    throw new Error(result.error);
+                }
+                
+                const passes = result.passes;
+                
+                if (passes.length === 0) {
+                    passGrid.innerHTML = `
+                        <div class="empty-state">
+                            <p>No passes available at the moment. Please check back later.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                passGrid.innerHTML = passes.map((pass, index) => `
+                    <div class="pass-select-card" data-pass-id="${pass.id}" onclick="selectPassCard(this, ${JSON.stringify(pass).replace(/"/g, '&quot;')})">
+                        ${index === 1 ? '<span class="pass-badge">★ MOST POPULAR</span>' : ''}
+                        <h3>${pass.name.toUpperCase()}</h3>
+                        <p class="description">${pass.description}</p>
+                        <div class="pass-price-display">
+                            <span class="current">₹${pass.price.toLocaleString('en-IN')}</span>
+                            ${pass.original_price ? `<span class="original">₹${pass.original_price.toLocaleString('en-IN')}</span>` : ''}
+                        </div>
+                        <ul class="pass-features-list">
+                            ${(pass.features || []).map(feature => `
+                                <li>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    ${feature}
+                                </li>
+                            `).join('')}
+                        </ul>
+                        <button class="btn-outline">SELECT THIS PASS</button>
+                    </div>
+                `).join('');
+                
+                // Check if there's a previously selected pass
+                const savedPass = getSelectedPass();
+                if (savedPass) {
+                    const card = document.querySelector(`[data-pass-id="${savedPass.id}"]`);
+                    if (card) {
+                        card.classList.add('selected');
+                        selectedPass = savedPass;
+                        document.getElementById('continueBtn').disabled = false;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading passes:', error);
+                passGrid.innerHTML = `
+                    <div class="empty-state">
+                        <p>Failed to load passes. Please try again later.</p>
+                        <button class="btn-primary" onclick="loadPasses()">Retry</button>
+                    </div>
+                `;
+            }
+        }
+        
+        function selectPassCard(card, pass) {
+            // Remove selection from all cards
+            document.querySelectorAll('.pass-select-card').forEach(c => c.classList.remove('selected'));
+            
+            // Select this card
+            card.classList.add('selected');
+            selectedPass = pass;
+            
+            // Enable continue button
+            document.getElementById('continueBtn').disabled = false;
+        }
+    </script>
+</body>
+</html>

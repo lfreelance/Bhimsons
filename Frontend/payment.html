@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Bhimson's Agro Park</title>
+    <meta name="description" content="Complete your payment for Bhimson's Agro Park booking.">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Razorpay JS -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="header" id="header">
+        <nav class="nav container">
+            <div class="nav-brand">
+                <a href="index.html"><h1 class="logo">BHIMSON'S AGRO PARK</h1></a>
+            </div>
+            
+            <div class="nav-actions" id="navActions"></div>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="page-container">
+        <div class="page-content">
+            <div class="container" style="max-width: 600px;">
+                <div class="page-header" style="text-align: center;">
+                    <h1 class="page-title">COMPLETE PAYMENT</h1>
+                    <p class="page-subtitle">Secure payment powered by Razorpay</p>
+                </div>
+                
+                <div class="booking-form-card">
+                    <!-- Booking Summary -->
+                    <div id="bookingSummary" style="margin-bottom: var(--space-6);">
+                        <!-- Will be populated by JS -->
+                    </div>
+                    
+                    <!-- Payment Amount -->
+                    <div class="booking-summary" id="paymentSummary">
+                        <!-- Will be populated by JS -->
+                    </div>
+                    
+                    <!-- Pay Button -->
+                    <button class="auth-btn" id="payBtn" style="margin-top: var(--space-6);">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        PAY NOW
+                    </button>
+                    
+                    <!-- Security Info -->
+                    <div style="text-align: center; margin-top: var(--space-6);">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-2); color: var(--color-text-muted); font-size: var(--text-sm);">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            Secure payment with 256-bit encryption
+                        </div>
+                        <div style="display: flex; justify-content: center; gap: var(--space-4); margin-top: var(--space-4);">
+                            <img src="https://cdn.razorpay.com/static/assets/logo/payment.svg" alt="Payment Methods" style="height: 24px; filter: brightness(0.8);">
+                        </div>
+                    </div>
+                </div>
+                
+                <p style="text-align: center; font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-6);">
+                    Having trouble? <a href="mailto:support@bhimsonsagropark.com" style="color: var(--color-primary);">Contact Support</a>
+                </p>
+            </div>
+        </div>
+    </main>
+    
+    <!-- JavaScript Files -->
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/booking.js"></script>
+    <script src="js/payment.js"></script>
+    <script>
+        let pendingBooking = null;
+        let bookingTotals = null;
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check authentication
+            const isAuth = await requireAuth('login.html');
+            if (!isAuth) return;
+            
+            // Get pending booking
+            pendingBooking = getLocal('pending_booking');
+            bookingTotals = getLocal('booking_totals');
+            
+            if (!pendingBooking) {
+                redirectTo('select-pass.html', 'No pending booking found', 'warning');
+                return;
+            }
+            
+            // Load booking details
+            await loadBookingDetails();
+            
+            // Pay button
+            document.getElementById('payBtn').addEventListener('click', handlePayment);
+        });
+        
+        async function loadBookingDetails() {
+            const result = await fetchBookingById(pendingBooking.id);
+            
+            if (!result.success) {
+                showToast('Failed to load booking details', 'error');
+                return;
+            }
+            
+            const booking = result.booking;
+            
+            // Booking Summary
+            document.getElementById('bookingSummary').innerHTML = `
+                <div style="background: var(--color-bg-dark); padding: var(--space-4); border-radius: var(--radius-md);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-3);">
+                        <span style="color: var(--color-text-muted);">Booking Number</span>
+                        <span style="color: var(--color-primary); font-weight: bold;">${booking.booking_number}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-3);">
+                        <span style="color: var(--color-text-muted);">Pass Type</span>
+                        <span style="color: var(--color-text-white);">${booking.passes?.name}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-3);">
+                        <span style="color: var(--color-text-muted);">Visit Date</span>
+                        <span style="color: var(--color-text-white);">${formatDate(booking.visit_date, { weekday: 'short' })}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-muted);">Guests</span>
+                        <span style="color: var(--color-text-white);">${booking.num_adults} Adult(s)${booking.num_children > 0 ? `, ${booking.num_children} Child(ren)` : ''}</span>
+                    </div>
+                </div>
+            `;
+            
+            // Payment Summary
+            document.getElementById('paymentSummary').innerHTML = `
+                <div class="summary-row total">
+                    <span class="label">Amount to Pay</span>
+                    <span class="value">₹${booking.total_amount.toLocaleString('en-IN')}</span>
+                </div>
+            `;
+        }
+        
+        async function handlePayment() {
+            const payBtn = document.getElementById('payBtn');
+            showLoading(payBtn, 'Processing...');
+            
+            try {
+                const result = await initiatePayment(pendingBooking.id, pendingBooking.total_amount);
+                
+                if (result.success) {
+                    // Clear pending booking
+                    removeLocal('pending_booking');
+                    removeLocal('booking_totals');
+                    
+                    // Store successful booking ID
+                    storeLocal('completed_booking_id', result.booking_id);
+                    
+                    // Redirect to success page
+                    window.location.href = 'booking-success.html';
+                }
+            } catch (error) {
+                showToast(error.message || 'Payment failed', 'error');
+                hideLoading(payBtn);
+            }
+        }
+    </script>
+</body>
+</html>

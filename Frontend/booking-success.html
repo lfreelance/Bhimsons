@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmed - Bhimson's Agro Park</title>
+    <meta name="description" content="Your booking at Bhimson's Agro Park has been confirmed.">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header class="header" id="header">
+        <nav class="nav container">
+            <div class="nav-brand">
+                <a href="index.html"><h1 class="logo">BHIMSON'S AGRO PARK</h1></a>
+            </div>
+            
+            <div class="nav-actions" id="navActions"></div>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="page-container">
+        <div class="page-content">
+            <div class="container">
+                <div class="success-page">
+                    <!-- Success Icon -->
+                    <div class="success-icon-large">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    
+                    <h1 class="page-title" style="color: #4CAF50;">BOOKING CONFIRMED!</h1>
+                    <p class="page-subtitle" style="margin-bottom: var(--space-8);">
+                        Your adventure awaits! A confirmation email has been sent to your registered email address.
+                    </p>
+                    
+                    <!-- Booking Details Card -->
+                    <div class="booking-form-card" style="text-align: left; max-width: 500px; margin: 0 auto;">
+                        <div id="bookingDetails">
+                            <div style="text-align: center; padding: var(--space-8);">
+                                <div class="spinner"></div>
+                                <p style="margin-top: var(--space-4); color: var(--color-text-muted);">Loading booking details...</p>
+                            </div>
+                        </div>
+                        
+                        <!-- QR Code -->
+                        <div id="qrCodeSection" style="text-align: center; margin-top: var(--space-6); display: none;">
+                            <p style="font-size: var(--text-sm); color: var(--color-text-muted); margin-bottom: var(--space-4);">
+                                Show this QR code at the entrance
+                            </p>
+                            <div class="qr-code-container">
+                                <img id="qrCodeImage" src="" alt="QR Code">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div style="display: flex; gap: var(--space-4); justify-content: center; margin-top: var(--space-8); flex-wrap: wrap;">
+                        <button class="btn-primary" id="downloadTicketBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            DOWNLOAD TICKET
+                        </button>
+                        <a href="dashboard.html" class="btn-secondary">VIEW MY BOOKINGS</a>
+                    </div>
+                    
+                    <!-- Next Steps -->
+                    <div style="background: var(--color-bg-card); border: 1px solid var(--color-bg-card-border); border-radius: var(--radius-lg); padding: var(--space-6); margin-top: var(--space-8); text-align: left; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        <h3 style="font-family: var(--font-display); color: var(--color-primary); margin-bottom: var(--space-4);">WHAT'S NEXT?</h3>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-3) 0; color: var(--color-text-light);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                Arrive 30 minutes before park opening time
+                            </li>
+                            <li style="display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-3) 0; color: var(--color-text-light);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                Carry valid photo ID for all guests
+                            </li>
+                            <li style="display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-3) 0; color: var(--color-text-light);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                Wear comfortable clothes and shoes
+                            </li>
+                            <li style="display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-3) 0; color: var(--color-text-light);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-primary)" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                                </svg>
+                                Contact us: +91 98765 43210
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- JavaScript Files -->
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/booking.js"></script>
+    <script src="js/payment.js"></script>
+    <script>
+        let bookingId = null;
+        let bookingData = null;
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Get booking ID from URL or localStorage
+            const params = getUrlParams();
+            bookingId = params.booking_id || getLocal('completed_booking_id');
+            
+            if (!bookingId) {
+                redirectTo('select-pass.html', 'No booking found', 'warning');
+                return;
+            }
+            
+            // Clear stored booking ID
+            removeLocal('completed_booking_id');
+            
+            // Load booking details
+            await loadBookingDetails();
+            
+            // Generate QR code
+            await generateQRCode();
+            
+            // Download ticket button
+            document.getElementById('downloadTicketBtn').addEventListener('click', async function() {
+                showLoading(this, 'Generating...');
+                await downloadTicket(bookingId);
+                hideLoading(this);
+            });
+        });
+        
+        async function loadBookingDetails() {
+            const result = await fetchBookingById(bookingId);
+            
+            if (!result.success) {
+                document.getElementById('bookingDetails').innerHTML = `
+                    <p style="color: var(--color-text-muted); text-align: center;">Failed to load booking details</p>
+                `;
+                return;
+            }
+            
+            bookingData = result.booking;
+            
+            document.getElementById('bookingDetails').innerHTML = `
+                <div style="border-bottom: 1px solid var(--color-bg-card-border); padding-bottom: var(--space-4); margin-bottom: var(--space-4);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--color-text-muted);">Booking Number</span>
+                        <span style="font-family: var(--font-display); font-size: var(--text-xl); color: var(--color-primary);">${bookingData.booking_number}</span>
+                    </div>
+                </div>
+                
+                <div style="display: grid; gap: var(--space-3);">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-muted);">Pass Type</span>
+                        <span style="color: var(--color-text-white); font-weight: var(--font-semibold);">${bookingData.passes?.name}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-muted);">Visit Date</span>
+                        <span style="color: var(--color-text-white);">${formatDate(bookingData.visit_date)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-muted);">Guests</span>
+                        <span style="color: var(--color-text-white);">${bookingData.num_adults} Adult(s)${bookingData.num_children > 0 ? `, ${bookingData.num_children} Child(ren)` : ''}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding-top: var(--space-3); border-top: 1px solid var(--color-bg-card-border);">
+                        <span style="color: var(--color-text-muted);">Total Paid</span>
+                        <span style="font-family: var(--font-display); font-size: var(--text-xl); color: var(--color-primary);">₹${bookingData.total_amount.toLocaleString('en-IN')}</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        async function generateQRCode() {
+            try {
+                const result = await generateBookingQR(bookingId);
+                
+                if (result.success && result.qr_code_url) {
+                    document.getElementById('qrCodeImage').src = result.qr_code_url;
+                    document.getElementById('qrCodeSection').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Failed to generate QR code:', error);
+            }
+        }
+    </script>
+</body>
+</html>

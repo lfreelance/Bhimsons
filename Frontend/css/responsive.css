@@ -1,0 +1,290 @@
+/* ===================================
+   Responsive Styles - Summit Adventures
+   =================================== */
+
+/* Large Desktop */
+@media (max-width: 1400px) {
+    :root {
+        --text-hero: 5rem;
+    }
+    
+    .stats-container {
+        gap: var(--space-12);
+    }
+}
+
+/* Desktop */
+@media (max-width: 1200px) {
+    :root {
+        --text-hero: 4.5rem;
+        --text-5xl: 3rem;
+    }
+    
+    .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-10);
+    }
+}
+
+/* Tablet Landscape */
+@media (max-width: 1024px) {
+    :root {
+        --text-hero: 4rem;
+        --container-padding: 2rem;
+    }
+    
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100vh;
+        background-color: var(--color-bg-dark);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: var(--space-8);
+        transition: var(--transition-normal);
+    }
+    
+    .nav-menu.active {
+        right: 0;
+    }
+    
+    .nav-link {
+        font-size: var(--text-xl);
+    }
+    
+    .hamburger {
+        display: flex;
+    }
+    
+    .nav-actions .phone-link {
+        display: none;
+    }
+    
+    .nav-actions .btn-primary {
+        display: none;
+    }
+    
+    .activities-grid,
+    .passes-grid,
+    .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stats-container {
+        flex-wrap: wrap;
+        gap: var(--space-8);
+    }
+    
+    .stat-item {
+        flex: 0 0 calc(50% - var(--space-4));
+    }
+}
+
+/* Tablet Portrait */
+@media (max-width: 768px) {
+    :root {
+        --text-hero: 3rem;
+        --text-5xl: 2.5rem;
+        --text-4xl: 2rem;
+        --text-3xl: 1.75rem;
+        --space-24: 4rem;
+        --space-20: 3.5rem;
+        --space-16: 3rem;
+    }
+    
+    .hero-subtitle {
+        font-size: var(--text-sm);
+        letter-spacing: 4px;
+    }
+    
+    .hero-description {
+        font-size: var(--text-base);
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+    
+    .hero-buttons .btn-large {
+        width: 100%;
+        max-width: 280px;
+    }
+    
+    .section-subtitle {
+        font-size: var(--text-sm);
+        letter-spacing: 4px;
+    }
+    
+    .section-title {
+        margin-bottom: var(--space-8);
+    }
+    
+    .activities-grid,
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-6);
+    }
+    
+    .passes-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-6);
+    }
+    
+    /* Reorder passes on mobile - featured first */
+    .passes-grid .pass-card.featured {
+        order: -1;
+    }
+    
+    .pass-card:hover {
+        transform: translateY(-8px) scale(1.01);
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+        text-align: center;
+    }
+    
+    .footer-column {
+        text-align: center;
+    }
+    
+    .social-links {
+        justify-content: center;
+    }
+    
+    .footer-links,
+    .footer-contact {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .footer-contact li {
+        justify-content: center;
+        text-align: left;
+    }
+    
+    .footer-bottom {
+        flex-direction: column;
+        gap: var(--space-4);
+        text-align: center;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    :root {
+        --text-hero: 2.5rem;
+        --text-5xl: 2rem;
+        --text-4xl: 1.75rem;
+        --text-3xl: 1.5rem;
+        --container-padding: 1rem;
+        --space-24: 3rem;
+        --space-20: 2.5rem;
+        --space-16: 2rem;
+    }
+    
+    .nav-brand .logo {
+        font-size: var(--text-xl);
+    }
+    
+    .hero-content {
+        padding: var(--space-4);
+    }
+    
+    .hero-subtitle {
+        font-size: var(--text-xs);
+        letter-spacing: 3px;
+    }
+    
+    .stat-number {
+        font-size: var(--text-4xl);
+    }
+    
+    .stat-label {
+        font-size: var(--text-xs);
+    }
+    
+    .activity-image {
+        height: 220px;
+    }
+    
+    .activity-content {
+        padding: var(--space-5);
+    }
+    
+    .pass-card {
+        padding: var(--space-6);
+    }
+    
+    .pass-card.featured {
+        padding-top: var(--space-12);
+    }
+    
+    .testimonial-card {
+        padding: var(--space-6);
+    }
+    
+    .quote-icon {
+        font-size: var(--text-4xl);
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 360px) {
+    :root {
+        --text-hero: 2rem;
+    }
+    
+    .hero-buttons .btn-large {
+        padding: var(--space-3) var(--space-6);
+        font-size: var(--text-sm);
+    }
+}
+
+/* Print Styles */
+@media print {
+    .header,
+    .scroll-indicator,
+    .hamburger {
+        display: none;
+    }
+    
+    .hero {
+        min-height: auto;
+        padding: var(--space-8);
+    }
+    
+    body {
+        background-color: white;
+        color: black;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    :root {
+        --color-text-muted: #AAAAAA;
+        --color-text-dark: #888888;
+    }
+}

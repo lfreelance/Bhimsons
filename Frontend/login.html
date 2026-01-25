@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Bhimson's Agro Park</title>
+    <meta name="description" content="Login to your Bhimson's Agro Park account to manage bookings and more.">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-container">
+            <!-- Back to Home -->
+            <a href="index.html" class="back-to-home">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Home
+            </a>
+            
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h1 class="auth-logo">BHIMSON'S AGRO PARK</h1>
+                    <h2 class="auth-title">WELCOME BACK</h2>
+                    <p class="auth-subtitle">Login to access your bookings and more</p>
+                </div>
+                
+                <form class="auth-form" id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            class="form-input" 
+                            placeholder="Enter your email"
+                            required
+                            autocomplete="email"
+                        >
+                        <span class="form-error" id="emailError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                class="form-input" 
+                                placeholder="Enter your password"
+                                required
+                                autocomplete="current-password"
+                            >
+                            <button type="button" class="password-toggle" id="togglePassword">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="form-error" id="passwordError"></span>
+                    </div>
+                    
+                    <div class="forgot-password">
+                        <a href="reset-password.html">Forgot Password?</a>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn" id="loginBtn">
+                        LOGIN
+                    </button>
+                </form>
+                
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="register.html">Register Now</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript Files -->
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Redirect if already logged in
+            await redirectIfLoggedIn('select-pass.html');
+            
+            // Password toggle
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+            });
+            
+            // Login form submission
+            const loginForm = document.getElementById('loginForm');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                
+                // Validation
+                if (!isValidEmail(email)) {
+                    document.getElementById('emailError').textContent = 'Please enter a valid email';
+                    document.getElementById('emailError').classList.add('show');
+                    return;
+                }
+                
+                // Show loading
+                showLoading(loginBtn, 'Logging in...');
+                
+                try {
+                    const result = await loginUser(email, password);
+                    
+                    if (result.success) {
+                        showToast('Login successful!', 'success');
+                        
+                        // Check for redirect URL
+                        const redirectUrl = getAuthRedirect() || 'select-pass.html';
+                        
+                        setTimeout(() => {
+                            window.location.href = redirectUrl;
+                        }, 1000);
+                    } else {
+                        showToast(result.error || 'Login failed', 'error');
+                        hideLoading(loginBtn);
+                    }
+                } catch (error) {
+                    showToast('An error occurred. Please try again.', 'error');
+                    hideLoading(loginBtn);
+                }
+            });
+            
+            // Clear errors on input
+            document.querySelectorAll('.form-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.classList.remove('error');
+                    const errorEl = this.parentElement.querySelector('.form-error') || 
+                                   this.parentElement.parentElement.querySelector('.form-error');
+                    if (errorEl) {
+                        errorEl.classList.remove('show');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

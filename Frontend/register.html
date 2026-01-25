@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Bhimson's Agro Park</title>
+    <meta name="description" content="Create your Bhimson's Agro Park account to start booking adventures.">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-container">
+            <!-- Back to Home -->
+            <a href="index.html" class="back-to-home">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Home
+            </a>
+            
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h1 class="auth-logo">BHIMSON'S AGRO PARK</h1>
+                    <h2 class="auth-title">CREATE ACCOUNT</h2>
+                    <p class="auth-subtitle">Join us for amazing adventures</p>
+                </div>
+                
+                <form class="auth-form" id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label" for="fullName">Full Name</label>
+                        <input 
+                            type="text" 
+                            id="fullName" 
+                            class="form-input" 
+                            placeholder="Enter your full name"
+                            required
+                            autocomplete="name"
+                        >
+                        <span class="form-error" id="fullNameError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            class="form-input" 
+                            placeholder="Enter your email"
+                            required
+                            autocomplete="email"
+                        >
+                        <span class="form-error" id="emailError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="phone">Phone Number</label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            class="form-input" 
+                            placeholder="Enter your phone number"
+                            required
+                            autocomplete="tel"
+                        >
+                        <span class="form-error" id="phoneError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                class="form-input" 
+                                placeholder="Create a password"
+                                required
+                                autocomplete="new-password"
+                            >
+                            <button type="button" class="password-toggle" id="togglePassword">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="form-error" id="passwordError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="confirmPassword">Confirm Password</label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="confirmPassword" 
+                                class="form-input" 
+                                placeholder="Confirm your password"
+                                required
+                                autocomplete="new-password"
+                            >
+                            <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="form-error" id="confirmPasswordError"></span>
+                    </div>
+                    
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="terms" required>
+                        <label for="terms">I agree to the <a href="#terms">Terms & Conditions</a> and <a href="#privacy">Privacy Policy</a></label>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn" id="registerBtn">
+                        CREATE ACCOUNT
+                    </button>
+                </form>
+                
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="login.html">Login Here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript Files -->
+    <script src="js/config.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Redirect if already logged in
+            await redirectIfLoggedIn('select-pass.html');
+            
+            // Password toggles
+            document.getElementById('togglePassword').addEventListener('click', function() {
+                const input = document.getElementById('password');
+                input.type = input.type === 'password' ? 'text' : 'password';
+            });
+            
+            document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+                const input = document.getElementById('confirmPassword');
+                input.type = input.type === 'password' ? 'text' : 'password';
+            });
+            
+            // Register form submission
+            const registerForm = document.getElementById('registerForm');
+            const registerBtn = document.getElementById('registerBtn');
+            
+            registerForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const fullName = document.getElementById('fullName').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                // Clear previous errors
+                document.querySelectorAll('.form-error').forEach(el => el.classList.remove('show'));
+                document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
+                
+                // Validation
+                let hasError = false;
+                
+                if (fullName.length < 2) {
+                    showFieldError('fullName', 'Please enter your full name');
+                    hasError = true;
+                }
+                
+                if (!isValidEmail(email)) {
+                    showFieldError('email', 'Please enter a valid email');
+                    hasError = true;
+                }
+                
+                if (!isValidPhone(phone)) {
+                    showFieldError('phone', 'Please enter a valid 10-digit phone number');
+                    hasError = true;
+                }
+                
+                const passwordValidation = validatePassword(password);
+                if (!passwordValidation.isValid) {
+                    showFieldError('password', passwordValidation.errors[0]);
+                    hasError = true;
+                }
+                
+                if (password !== confirmPassword) {
+                    showFieldError('confirmPassword', 'Passwords do not match');
+                    hasError = true;
+                }
+                
+                if (hasError) return;
+                
+                // Show loading
+                showLoading(registerBtn, 'Creating account...');
+                
+                try {
+                    const result = await registerUser(email, password, fullName, phone);
+                    
+                    if (result.success) {
+                        showToast('Account created successfully!', 'success');
+                        
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 1500);
+                    } else {
+                        showToast(result.error || 'Registration failed', 'error');
+                        hideLoading(registerBtn);
+                    }
+                } catch (error) {
+                    showToast('An error occurred. Please try again.', 'error');
+                    hideLoading(registerBtn);
+                }
+            });
+            
+            function showFieldError(fieldId, message) {
+                const input = document.getElementById(fieldId);
+                const error = document.getElementById(fieldId + 'Error');
+                if (input) input.classList.add('error');
+                if (error) {
+                    error.textContent = message;
+                    error.classList.add('show');
+                }
+            }
+            
+            // Clear errors on input
+            document.querySelectorAll('.form-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.classList.remove('error');
+                    const errorEl = document.getElementById(this.id + 'Error');
+                    if (errorEl) errorEl.classList.remove('show');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
