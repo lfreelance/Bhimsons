@@ -224,8 +224,9 @@
                         }
                         toPicker.setDate(endDate);
                         
-                        // Clear errors
+                        // Clear errors and update price
                         document.getElementById('fromDateError').classList.remove('show');
+                        updatePriceSummary();
                     }
                 }
             });
@@ -240,6 +241,7 @@
                 theme: 'dark',
                 onChange: function() {
                     document.getElementById('toDateError').classList.remove('show');
+                    updatePriceSummary();
                 }
             });
             
@@ -269,39 +271,66 @@
             `;
         }
         
+        function getNumberOfDays() {
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            if (!fromDate || !toDate) return 1;
+            const from = new Date(fromDate);
+            const to = new Date(toDate);
+            const diffTime = Math.abs(to - from);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // inclusive
+            return Math.max(diffDays, 1);
+        }
+        
         function updatePriceSummary() {
             const numAdults = parseInt(document.getElementById('numAdults').value) || 1;
             const numChildren = parseInt(document.getElementById('numChildren').value) || 0;
+            const numDays = getNumberOfDays();
             
-            const totals = calculateBookingTotal(selectedPass.price, numAdults, numChildren);
+            const pricePerDay = selectedPass.price;
+            const dailyTotals = calculateBookingTotal(pricePerDay, numAdults, numChildren);
+            
+            // Multiply by number of days
+            const adultTotal = dailyTotals.adultTotal * numDays;
+            const childTotal = dailyTotals.childTotal * numDays;
+            const subtotal = adultTotal + childTotal;
+            const tax = Math.round(subtotal * CONFIG.TAX_PERCENTAGE / 100);
+            const convenienceFee = CONFIG.CONVENIENCE_FEE;
+            const total = subtotal + tax + convenienceFee;
             
             const priceSummary = document.getElementById('priceSummary');
             priceSummary.innerHTML = `
+                ${numDays > 1 ? `
                 <div class="summary-row">
-                    <span class="label">Adult × ${numAdults}</span>
-                    <span class="value">₹${totals.adultTotal.toLocaleString('en-IN')}</span>
+                    <span class="label">Duration</span>
+                    <span class="value">${numDays} days</span>
+                </div>
+                ` : ''}
+                <div class="summary-row">
+                    <span class="label">Adult × ${numAdults}${numDays > 1 ? ' × ' + numDays + ' days' : ''}</span>
+                    <span class="value">₹${adultTotal.toLocaleString('en-IN')}</span>
                 </div>
                 ${numChildren > 0 ? `
                 <div class="summary-row">
-                    <span class="label">Child × ${numChildren} (50% off)</span>
-                    <span class="value">₹${totals.childTotal.toLocaleString('en-IN')}</span>
+                    <span class="label">Child × ${numChildren}${numDays > 1 ? ' × ' + numDays + ' days' : ''} (50% off)</span>
+                    <span class="value">₹${childTotal.toLocaleString('en-IN')}</span>
                 </div>
                 ` : ''}
                 <div class="summary-row">
                     <span class="label">Subtotal</span>
-                    <span class="value">₹${totals.subtotal.toLocaleString('en-IN')}</span>
+                    <span class="value">₹${subtotal.toLocaleString('en-IN')}</span>
                 </div>
                 <div class="summary-row">
                     <span class="label">GST (${CONFIG.TAX_PERCENTAGE}%)</span>
-                    <span class="value">₹${totals.tax.toLocaleString('en-IN')}</span>
+                    <span class="value">₹${tax.toLocaleString('en-IN')}</span>
                 </div>
                 <div class="summary-row">
                     <span class="label">Convenience Fee</span>
-                    <span class="value">₹${totals.convenienceFee.toLocaleString('en-IN')}</span>
+                    <span class="value">₹${convenienceFee.toLocaleString('en-IN')}</span>
                 </div>
                 <div class="summary-row total">
                     <span class="label">Total Amount</span>
-                    <span class="value">₹${totals.total.toLocaleString('en-IN')}</span>
+                    <span class="value">₹${total.toLocaleString('en-IN')}</span>
                 </div>
             `;
         }

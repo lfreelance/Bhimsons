@@ -490,7 +490,18 @@
 
 .pass-select-card.selected {
     border-color: var(--color-primary);
-    background-color: rgba(245, 166, 35, 0.05);
+    background-color: rgba(245, 166, 35, 0.12);
+    box-shadow: 0 0 20px rgba(245, 166, 35, 0.25), inset 0 0 0 1px var(--color-primary);
+}
+
+.pass-select-card.selected h3 {
+    color: var(--color-primary);
+}
+
+.pass-select-card.selected .btn-outline {
+    background-color: var(--color-primary);
+    color: var(--color-bg-dark);
+    font-weight: var(--font-bold);
 }
 
 .pass-badge {
