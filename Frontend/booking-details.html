@@ -19,8 +19,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Flatpickr Calendar -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+    
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body>
     <!-- Navigation Header -->
@@ -69,15 +74,31 @@
                         <h2 style="font-family: var(--font-display); font-size: var(--text-2xl); margin-bottom: var(--space-6);">BOOKING DETAILS</h2>
                         
                         <form id="bookingForm" class="auth-form">
-                            <div class="form-group">
-                                <label class="form-label" for="visitDate">Visit Date *</label>
-                                <input 
-                                    type="date" 
-                                    id="visitDate" 
-                                    class="form-input" 
-                                    required
-                                >
-                                <span class="form-error" id="visitDateError"></span>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="fromDate">From Date *</label>
+                                    <input 
+                                        type="text" 
+                                        id="fromDate" 
+                                        class="form-input" 
+                                        placeholder="Select start date"
+                                        required
+                                        readonly
+                                    >
+                                    <span class="form-error" id="fromDateError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="toDate">To Date *</label>
+                                    <input 
+                                        type="text" 
+                                        id="toDate" 
+                                        class="form-input" 
+                                        placeholder="Select end date"
+                                        required
+                                        readonly
+                                    >
+                                    <span class="form-error" id="toDateError"></span>
+                                </div>
                             </div>
                             
                             <div class="form-row">
@@ -162,6 +183,8 @@
     <script src="js/main.js"></script>
     <script>
         let selectedPass = null;
+        let fromPicker = null;
+        let toPicker = null;
         
         document.addEventListener('DOMContentLoaded', async function() {
             // Check authentication
@@ -175,10 +198,50 @@
                 return;
             }
             
-            // Setup date picker
-            const visitDateInput = document.getElementById('visitDate');
-            visitDateInput.min = getMinBookingDate();
-            visitDateInput.max = getMaxBookingDate();
+            // Setup Flatpickr calendar date pickers
+            const minDate = getMinBookingDate();
+            const maxDate = getMaxBookingDate();
+            
+            fromPicker = flatpickr('#fromDate', {
+                dateFormat: 'Y-m-d',
+                altInput: true,
+                altFormat: 'D, d M Y',
+                minDate: minDate,
+                maxDate: maxDate,
+                disableMobile: true,
+                theme: 'dark',
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        // Set toDate minimum to fromDate
+                        toPicker.set('minDate', selectedDates[0]);
+                        
+                        // Auto-set toDate based on pass duration
+                        let endDate = new Date(selectedDates[0]);
+                        if (selectedPass.duration === 'weekend') {
+                            endDate.setDate(endDate.getDate() + 1);
+                        } else if (selectedPass.duration === 'month') {
+                            endDate.setDate(endDate.getDate() + 29);
+                        }
+                        toPicker.setDate(endDate);
+                        
+                        // Clear errors
+                        document.getElementById('fromDateError').classList.remove('show');
+                    }
+                }
+            });
+            
+            toPicker = flatpickr('#toDate', {
+                dateFormat: 'Y-m-d',
+                altInput: true,
+                altFormat: 'D, d M Y',
+                minDate: minDate,
+                maxDate: maxDate,
+                disableMobile: true,
+                theme: 'dark',
+                onChange: function() {
+                    document.getElementById('toDateError').classList.remove('show');
+                }
+            });
             
             // Load pass summary
             loadPassSummary();
@@ -246,22 +309,35 @@
         async function handleBookingSubmit(e) {
             e.preventDefault();
             
-            const visitDate = document.getElementById('visitDate').value;
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
             const numAdults = parseInt(document.getElementById('numAdults').value) || 1;
             const numChildren = parseInt(document.getElementById('numChildren').value) || 0;
             const specialRequests = document.getElementById('specialRequests').value.trim();
             const dietaryPreferences = document.getElementById('dietaryPreferences').value.trim();
             
             // Validation
-            if (!visitDate) {
-                document.getElementById('visitDateError').textContent = 'Please select a visit date';
-                document.getElementById('visitDateError').classList.add('show');
+            if (!fromDate) {
+                document.getElementById('fromDateError').textContent = 'Please select a start date';
+                document.getElementById('fromDateError').classList.add('show');
                 return;
             }
             
-            if (!isValidBookingDate(visitDate)) {
-                document.getElementById('visitDateError').textContent = 'Please select a valid date within the booking window';
-                document.getElementById('visitDateError').classList.add('show');
+            if (!toDate) {
+                document.getElementById('toDateError').textContent = 'Please select an end date';
+                document.getElementById('toDateError').classList.add('show');
+                return;
+            }
+            
+            if (new Date(toDate) < new Date(fromDate)) {
+                document.getElementById('toDateError').textContent = 'End date must be after start date';
+                document.getElementById('toDateError').classList.add('show');
+                return;
+            }
+            
+            if (!isValidBookingDate(fromDate)) {
+                document.getElementById('fromDateError').textContent = 'Please select a valid date within the booking window';
+                document.getElementById('fromDateError').classList.add('show');
                 return;
             }
             
@@ -271,10 +347,10 @@
             try {
                 const bookingData = {
                     pass_id: selectedPass.id,
-                    visit_date: visitDate,
+                    visit_date: fromDate,
                     num_adults: numAdults,
                     num_children: numChildren,
-                    special_requests: specialRequests || null,
+                    special_requests: specialRequests ? `${specialRequests} | Visit: ${fromDate} to ${toDate}` : `Visit: ${fromDate} to ${toDate}`,
                     dietary_preferences: dietaryPreferences || null
                 };
                 
@@ -306,6 +382,62 @@
             div[style*="grid-template-columns: 1fr 400px"] {
                 grid-template-columns: 1fr !important;
             }
+        }
+        
+        /* Flatpickr custom dark theme overrides */
+        .flatpickr-calendar {
+            background: #1a1a2e !important;
+            border: 1px solid var(--color-primary, #d4a017) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5) !important;
+        }
+        .flatpickr-months .flatpickr-month {
+            background: #1a1a2e !important;
+            color: #fff !important;
+        }
+        .flatpickr-current-month .flatpickr-monthDropdown-months,
+        .flatpickr-current-month input.cur-year {
+            color: #fff !important;
+        }
+        .flatpickr-weekdays {
+            background: #1a1a2e !important;
+        }
+        span.flatpickr-weekday {
+            color: var(--color-primary, #d4a017) !important;
+            font-weight: 600 !important;
+        }
+        .flatpickr-day {
+            color: #fff !important;
+            border-radius: 8px !important;
+        }
+        .flatpickr-day:hover {
+            background: var(--color-primary, #d4a017) !important;
+            border-color: var(--color-primary, #d4a017) !important;
+            color: #000 !important;
+        }
+        .flatpickr-day.selected {
+            background: var(--color-primary, #d4a017) !important;
+            border-color: var(--color-primary, #d4a017) !important;
+            color: #000 !important;
+            font-weight: 700 !important;
+        }
+        .flatpickr-day.today {
+            border-color: var(--color-primary, #d4a017) !important;
+        }
+        .flatpickr-day.flatpickr-disabled {
+            color: #555 !important;
+        }
+        .flatpickr-months .flatpickr-prev-month,
+        .flatpickr-months .flatpickr-next-month {
+            fill: var(--color-primary, #d4a017) !important;
+            color: var(--color-primary, #d4a017) !important;
+        }
+        .flatpickr-months .flatpickr-prev-month:hover svg,
+        .flatpickr-months .flatpickr-next-month:hover svg {
+            fill: #fff !important;
+        }
+        .form-input[readonly] {
+            cursor: pointer;
         }
     </style>
 </body>
