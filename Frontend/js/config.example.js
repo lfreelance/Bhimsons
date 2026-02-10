@@ -29,7 +29,7 @@ const CONFIG = {
     // Booking Settings
     MAX_GUESTS_PER_BOOKING: 20,
     MIN_ADVANCE_HOURS: 24,
-    ADVANCE_BOOKING_DAYS: 30,
+    ADVANCE_BOOKING_DAYS: 90,
     CANCELLATION_HOURS: 48,
     
     // Child pricing (percentage of adult price)
