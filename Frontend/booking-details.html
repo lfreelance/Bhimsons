@@ -278,7 +278,7 @@
             const from = new Date(fromDate);
             const to = new Date(toDate);
             const diffTime = Math.abs(to - from);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // inclusive
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
             return Math.max(diffDays, 1);
         }
         
@@ -286,33 +286,40 @@
             const numAdults = parseInt(document.getElementById('numAdults').value) || 1;
             const numChildren = parseInt(document.getElementById('numChildren').value) || 0;
             const numDays = getNumberOfDays();
+            const isDayPass = selectedPass.duration === 'day';
             
-            const pricePerDay = selectedPass.price;
-            const dailyTotals = calculateBookingTotal(pricePerDay, numAdults, numChildren);
+            const totals = calculateBookingTotal(selectedPass.price, numAdults, numChildren);
             
-            // Multiply by number of days
-            const adultTotal = dailyTotals.adultTotal * numDays;
-            const childTotal = dailyTotals.childTotal * numDays;
+            // Only Day Pass multiplies by number of days
+            const multiplier = isDayPass ? numDays : 1;
+            const adultTotal = totals.adultTotal * multiplier;
+            const childTotal = totals.childTotal * multiplier;
             const subtotal = adultTotal + childTotal;
             const tax = Math.round(subtotal * CONFIG.TAX_PERCENTAGE / 100);
             const convenienceFee = CONFIG.CONVENIENCE_FEE;
             const total = subtotal + tax + convenienceFee;
             
+            // Duration label
+            let durationLabel = '';
+            if (selectedPass.duration === 'weekend') durationLabel = '2-day Weekend Getaway';
+            else if (selectedPass.duration === 'month') durationLabel = '30-day Monthly Pass';
+            else if (numDays > 1) durationLabel = `${numDays} days`;
+            
             const priceSummary = document.getElementById('priceSummary');
             priceSummary.innerHTML = `
-                ${numDays > 1 ? `
+                ${durationLabel ? `
                 <div class="summary-row">
                     <span class="label">Duration</span>
-                    <span class="value">${numDays} days</span>
+                    <span class="value">${durationLabel}</span>
                 </div>
                 ` : ''}
                 <div class="summary-row">
-                    <span class="label">Adult × ${numAdults}${numDays > 1 ? ' × ' + numDays + ' days' : ''}</span>
+                    <span class="label">Adult × ${numAdults}${isDayPass && numDays > 1 ? ' × ' + numDays + ' days' : ''}</span>
                     <span class="value">₹${adultTotal.toLocaleString('en-IN')}</span>
                 </div>
                 ${numChildren > 0 ? `
                 <div class="summary-row">
-                    <span class="label">Child × ${numChildren}${numDays > 1 ? ' × ' + numDays + ' days' : ''} (50% off)</span>
+                    <span class="label">Child × ${numChildren}${isDayPass && numDays > 1 ? ' × ' + numDays + ' days' : ''} (50% off)</span>
                     <span class="value">₹${childTotal.toLocaleString('en-IN')}</span>
                 </div>
                 ` : ''}
@@ -467,6 +474,11 @@
         }
         .form-input[readonly] {
             cursor: pointer;
+        }
+        /* Hide days from other months */
+        .flatpickr-day.prevMonthDay,
+        .flatpickr-day.nextMonthDay {
+            visibility: hidden !important;
         }
     </style>
 </body>
