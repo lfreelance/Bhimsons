@@ -2,23 +2,21 @@
    Configuration - Bhimson's Agro Park
    =================================== */
 
-// IMPORTANT: Replace these values with your actual Supabase credentials
-// In production, these should be loaded from environment variables
+// IMPORTANT: Copy this file as config.js and replace with your actual credentials
+// cp config.example.js config.js
 
 const CONFIG = {
     // Supabase Configuration
-    SUPABASE_URL: 'https://iiwzsinmqwbseidzmmwz.supabase.co', // e.g., 'https://xxxxx.supabase.co'
-    SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlpd3pzaW5tcXdic2VpZHptbXd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg5MDQ2NjMsImV4cCI6MjA4NDQ4MDY2M30.cXjStmsILrJe5cZpw-l0Ol0VH_K8pMbRRgHfEmBmEV4',
+    SUPABASE_URL: 'https://your-project-ref.supabase.co',
+    SUPABASE_ANON_KEY: 'your-supabase-anon-key-here',
     
     // Edge Functions URLs (auto-generated from SUPABASE_URL)
-    // After deploying Edge Functions, these will be available at:
-    // https://YOUR_PROJECT_REF.supabase.co/functions/v1/FUNCTION_NAME
     get EDGE_FUNCTIONS_URL() {
         return `${this.SUPABASE_URL}/functions/v1`;
     },
     
     // Razorpay Configuration
-    RAZORPAY_KEY_ID: 'YOUR_RAZORPAY_KEY_ID', // e.g., 'rzp_test_xxxxx'
+    RAZORPAY_KEY_ID: 'YOUR_RAZORPAY_KEY_ID',
     
     // Application Settings
     APP_NAME: "Bhimson's Agro Park",

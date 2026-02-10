@@ -119,15 +119,29 @@
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    background: none;
+    background: rgba(255, 255, 255, 0.1);
     border: none;
-    color: var(--color-text-muted);
+    border-radius: 4px;
+    color: var(--color-text-light);
     cursor: pointer;
-    padding: 4px;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
 }
 
 .password-toggle:hover {
     color: var(--color-primary);
+    background: rgba(245, 166, 35, 0.15);
+}
+
+.password-toggle svg {
+    display: block;
+}
+
+.password-toggle .eye-hide {
+    display: none;
 }
 
 /* Form Row (for side by side fields) */

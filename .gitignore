@@ -1,0 +1,14 @@
+# Secrets
+.env
+.env.*
+.env.local
+
+# Real config with keys
+Frontend/js/config.js
+
+# OS files
+.DS_Store
+*/.DS_Store
+
+# Supabase temp
+Backend/supabase/.temp/

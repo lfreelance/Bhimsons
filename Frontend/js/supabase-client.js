@@ -5,13 +5,13 @@
 // Import Supabase from CDN (loaded in HTML)
 // <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-let supabase = null;
+let supabaseClient = null;
 
 /**
  * Initialize Supabase client
  */
 function initSupabase() {
-    if (supabase) return supabase;
+    if (supabaseClient) return supabaseClient;
     
     if (!CONFIG.SUPABASE_URL || CONFIG.SUPABASE_URL === 'YOUR_SUPABASE_URL') {
         console.error('Supabase URL not configured. Please update js/config.js');
@@ -24,7 +24,7 @@ function initSupabase() {
     }
     
     try {
-        supabase = window.supabase.createClient(
+        supabaseClient = window.supabase.createClient(
             CONFIG.SUPABASE_URL,
             CONFIG.SUPABASE_ANON_KEY,
             {
@@ -37,7 +37,7 @@ function initSupabase() {
         );
         
         console.log('Supabase client initialized successfully');
-        return supabase;
+        return supabaseClient;
     } catch (error) {
         console.error('Failed to initialize Supabase:', error);
         return null;
@@ -48,10 +48,10 @@ function initSupabase() {
  * Get Supabase client instance
  */
 function getSupabase() {
-    if (!supabase) {
+    if (!supabaseClient) {
         return initSupabase();
     }
-    return supabase;
+    return supabaseClient;
 }
 
 /**
@@ -92,8 +92,13 @@ async function getSession() {
  * Check if user is logged in
  */
 async function isLoggedIn() {
-    const session = await getSession();
-    return session !== null;
+    try {
+        const session = await getSession();
+        return session !== null;
+    } catch (error) {
+        console.error('Error checking login status:', error);
+        return false;
+    }
 }
 
 /**

@@ -63,10 +63,16 @@
                                 required
                                 autocomplete="current-password"
                             >
-                            <button type="button" class="password-toggle" id="togglePassword">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <button type="button" class="password-toggle" id="togglePassword" title="Show password">
+                                <!-- Eye icon (show password) -->
+                                <svg class="eye-show" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                     <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <!-- Eye-off icon (hide password) -->
+                                <svg class="eye-hide" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                    <line x1="1" y1="1" x2="23" y2="23"></line>
                                 </svg>
                             </button>
                         </div>
@@ -102,10 +108,19 @@
             // Password toggle
             const togglePassword = document.getElementById('togglePassword');
             const passwordInput = document.getElementById('password');
+            const eyeShow = togglePassword.querySelector('.eye-show');
+            const eyeHide = togglePassword.querySelector('.eye-hide');
             
             togglePassword.addEventListener('click', function() {
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
+                const isPassword = passwordInput.getAttribute('type') === 'password';
+                passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                
+                // Toggle icons
+                eyeShow.style.display = isPassword ? 'none' : 'block';
+                eyeHide.style.display = isPassword ? 'block' : 'none';
+                
+                // Update title
+                togglePassword.title = isPassword ? 'Hide password' : 'Show password';
             });
             
             // Login form submission
@@ -129,23 +144,35 @@
                 showLoading(loginBtn, 'Logging in...');
                 
                 try {
+                    console.log('Attempting login...');
                     const result = await loginUser(email, password);
+                    console.log('Login result:', result);
                     
                     if (result.success) {
-                        showToast('Login successful!', 'success');
+                        showToast('Login successful! Redirecting...', 'success');
                         
                         // Check for redirect URL
                         const redirectUrl = getAuthRedirect() || 'select-pass.html';
+                        console.log('Redirecting to:', redirectUrl);
                         
                         setTimeout(() => {
                             window.location.href = redirectUrl;
                         }, 1000);
                     } else {
-                        showToast(result.error || 'Login failed', 'error');
+                        console.error('Login failed:', result.error);
+                        // Show more helpful error messages
+                        let errorMsg = result.error || 'Login failed';
+                        if (errorMsg.includes('Invalid login credentials')) {
+                            errorMsg = 'Invalid email or password. Please try again.';
+                        } else if (errorMsg.includes('Email not confirmed')) {
+                            errorMsg = 'Please check your email and click the confirmation link first.';
+                        }
+                        showToast(errorMsg, 'error');
                         hideLoading(loginBtn);
                     }
                 } catch (error) {
-                    showToast('An error occurred. Please try again.', 'error');
+                    console.error('Login exception:', error);
+                    showToast('Connection error. Please check your internet and try again.', 'error');
                     hideLoading(loginBtn);
                 }
             });

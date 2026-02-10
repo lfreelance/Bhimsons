@@ -130,7 +130,7 @@
                 }
                 
                 passGrid.innerHTML = passes.map((pass, index) => `
-                    <div class="pass-select-card" data-pass-id="${pass.id}" onclick="selectPassCard(this, ${JSON.stringify(pass).replace(/"/g, '&quot;')})">
+                    <div class="pass-select-card" data-pass-id="${pass.id}" data-pass-slug="${pass.slug}" onclick="selectPassCard(this, ${JSON.stringify(pass).replace(/"/g, '&quot;')})">
                         ${index === 1 ? '<span class="pass-badge">★ MOST POPULAR</span>' : ''}
                         <h3>${pass.name.toUpperCase()}</h3>
                         <p class="description">${pass.description}</p>
@@ -152,14 +152,31 @@
                     </div>
                 `).join('');
                 
-                // Check if there's a previously selected pass
-                const savedPass = getSelectedPass();
-                if (savedPass) {
-                    const card = document.querySelector(`[data-pass-id="${savedPass.id}"]`);
+                // Check for pass parameter in URL (from homepage book buttons)
+                const urlParams = new URLSearchParams(window.location.search);
+                const passSlug = urlParams.get('pass');
+                
+                if (passSlug) {
+                    // Find and select the pass from URL
+                    const card = document.querySelector(`[data-pass-slug="${passSlug}"]`);
                     if (card) {
-                        card.classList.add('selected');
-                        selectedPass = savedPass;
-                        document.getElementById('continueBtn').disabled = false;
+                        const passData = passes.find(p => p.slug === passSlug);
+                        if (passData) {
+                            card.classList.add('selected');
+                            selectedPass = passData;
+                            document.getElementById('continueBtn').disabled = false;
+                        }
+                    }
+                } else {
+                    // Check if there's a previously selected pass in localStorage
+                    const savedPass = getSelectedPass();
+                    if (savedPass) {
+                        const card = document.querySelector(`[data-pass-id="${savedPass.id}"]`);
+                        if (card) {
+                            card.classList.add('selected');
+                            selectedPass = savedPass;
+                            document.getElementById('continueBtn').disabled = false;
+                        }
                     }
                 }
             } catch (error) {
