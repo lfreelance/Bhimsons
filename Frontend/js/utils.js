@@ -393,18 +393,23 @@ function calculateBookingTotal(passPrice, numAdults, numChildren = 0) {
 
 /**
  * Check if date is valid for booking
+ *
+ * NOTE:
+ * - We allow up to 365 days of advance booking so that
+ *   full upcoming months remain selectable in the calendar.
  */
 function isValidBookingDate(date) {
     const selectedDate = new Date(date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const minDate = new Date(today);
     minDate.setHours(minDate.getHours() + CONFIG.MIN_ADVANCE_HOURS);
-    
+
     const maxDate = new Date(today);
-    maxDate.setDate(maxDate.getDate() + CONFIG.ADVANCE_BOOKING_DAYS);
-    
+    const advanceDays = 365;
+    maxDate.setDate(maxDate.getDate() + advanceDays);
+
     return selectedDate >= minDate && selectedDate <= maxDate;
 }
 
@@ -419,10 +424,14 @@ function getMinBookingDate() {
 
 /**
  * Get maximum booking date
+ *
+ * NOTE:
+ * - Returns a date 365 days from today so that the
+ *   calendar shows an entire year of selectable dates.
  */
 function getMaxBookingDate() {
     const date = new Date();
-    date.setDate(date.getDate() + CONFIG.ADVANCE_BOOKING_DAYS);
+    date.setDate(date.getDate() + 365);
     return formatDateForInput(date);
 }
 
