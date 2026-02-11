@@ -365,10 +365,9 @@ async function updateHeaderAuthUI() {
             }
         });
     } else {
-        // Show login/register buttons
+        // Show single login/register button
         navActions.innerHTML = `
-            <a href="login.html" class="btn-outline btn-sm">LOGIN</a>
-            <a href="register.html" class="btn-primary btn-sm">REGISTER</a>
+            <a href="login.html" class="btn-primary btn-sm">LOGIN / REGISTER</a>
         `;
     }
 }

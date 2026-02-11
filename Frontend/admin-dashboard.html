@@ -27,10 +27,12 @@
         <!-- Sidebar -->
         <aside class="admin-sidebar" id="adminSidebar">
             <div class="admin-sidebar-header">
-                <h1 class="admin-logo">
-                    BHIMSON'S
-                    <span>Admin Panel</span>
-                </h1>
+                <a href="index.html" class="admin-logo-link" onclick="window.location.href='index.html'; return true;">
+                    <h1 class="admin-logo">
+                        BHIMSON'S
+                        <span>Admin Panel</span>
+                    </h1>
+                </a>
             </div>
             
             <nav class="admin-nav">
@@ -115,6 +117,13 @@
                             <line x1="3" y1="18" x2="21" y2="18"></line>
                         </svg>
                     </button>
+                    <a href="index.html" class="admin-home-link" title="Go to Home">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                        </svg>
+                        <span class="admin-home-text">Home</span>
+                    </a>
                     <div class="admin-search">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="11" cy="11" r="8"></circle>
@@ -500,6 +509,18 @@
                     document.getElementById('sidebarOverlay').classList.remove('show');
                 });
             });
+            
+            // Logo link - redirect to home
+            const logoLink = document.querySelector('.admin-logo-link');
+            if (logoLink) {
+                logoLink.addEventListener('click', function(e) {
+                    console.log('Logo clicked - redirecting to home');
+                    window.location.href = 'index.html';
+                });
+                console.log('Logo link handler attached');
+            } else {
+                console.error('Logo link not found!');
+            }
             
             // Mobile menu
             document.getElementById('mobileMenuToggle').addEventListener('click', function() {
