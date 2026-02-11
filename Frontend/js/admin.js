@@ -518,6 +518,122 @@ async function exportPaymentsToCSV(filters = {}) {
 }
 
 /**
+ * Fetch login statistics for admin dashboard
+ */
+async function fetchLoginStats() {
+    const client = getSupabase();
+    if (!client) {
+        throw new Error('Supabase not initialized');
+    }
+
+    try {
+        const { data: stats, error } = await client
+            .from('login_stats')
+            .select('*')
+            .single();
+
+        if (error) throw error;
+
+        return {
+            success: true,
+            stats: stats
+        };
+    } catch (error) {
+        console.error('Error fetching login stats:', error);
+        return {
+            success: false,
+            error: error.message || 'Failed to fetch login statistics'
+        };
+    }
+}
+
+/**
+ * Fetch recent login activity
+ */
+async function fetchRecentLogins(limit = 20) {
+    const client = getSupabase();
+    if (!client) {
+        throw new Error('Supabase not initialized');
+    }
+
+    try {
+        const { data, error } = await client
+            .from('recent_logins')
+            .select('*')
+            .limit(limit);
+
+        if (error) throw error;
+
+        return {
+            success: true,
+            logins: data
+        };
+    } catch (error) {
+        console.error('Error fetching recent logins:', error);
+        return {
+            success: false,
+            error: error.message || 'Failed to fetch recent logins'
+        };
+    }
+}
+
+/**
+ * Fetch detailed booking info by ID (for modal view)
+ */
+async function fetchBookingDetail(bookingId) {
+    const client = getSupabase();
+    if (!client) {
+        throw new Error('Supabase not initialized');
+    }
+
+    try {
+        // Fetch booking with all related data
+        const { data: booking, error: bookingError } = await client
+            .from('bookings')
+            .select(`
+                *,
+                profiles(full_name, email, phone),
+                passes(name, slug, price, duration)
+            `)
+            .eq('id', bookingId)
+            .single();
+
+        if (bookingError) throw bookingError;
+
+        // Fetch payment for this booking
+        const { data: payment, error: paymentError } = await client
+            .from('payments')
+            .select('*')
+            .eq('booking_id', bookingId)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+
+        // Payment might not exist (pending), so don't throw
+        
+        // Fetch booking logs
+        const { data: logs, error: logsError } = await client
+            .from('booking_logs')
+            .select('*')
+            .eq('booking_id', bookingId)
+            .order('created_at', { ascending: false });
+
+        return {
+            success: true,
+            booking: booking,
+            payment: payment || null,
+            logs: logs || []
+        };
+    } catch (error) {
+        console.error('Error fetching booking detail:', error);
+        return {
+            success: false,
+            error: error.message || 'Failed to fetch booking details'
+        };
+    }
+}
+
+/**
  * Get booking count by date range
  */
 async function getBookingsByDateRange(startDate, endDate) {

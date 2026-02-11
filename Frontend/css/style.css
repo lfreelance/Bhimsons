@@ -871,6 +871,19 @@ button {
     color: #DC3545;
 }
 
+.admin-footer-link {
+    font-size: var(--text-xs);
+    color: var(--color-bg-card-border);
+    text-decoration: none;
+    transition: var(--transition-fast);
+    opacity: 0.5;
+}
+
+.admin-footer-link:hover {
+    color: var(--color-text-muted);
+    opacity: 1;
+}
+
 /* ===================================
    Placeholder for missing images
    =================================== */

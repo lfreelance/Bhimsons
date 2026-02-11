@@ -137,7 +137,30 @@
             <div class="admin-content">
                 <!-- Overview Section -->
                 <section id="overviewSection" class="admin-section">
-                    <h2 style="font-family: var(--font-display); font-size: var(--text-2xl); margin-bottom: var(--space-6);">DASHBOARD OVERVIEW</h2>
+                    
+                    <!-- Welcome Summary Card -->
+                    <div class="welcome-card" id="welcomeCard">
+                        <div class="welcome-card-content">
+                            <h2 class="welcome-title">Welcome back, <span id="welcomeName">Admin</span></h2>
+                            <p class="welcome-subtitle" id="welcomeDate"></p>
+                            <div class="welcome-summary" id="welcomeSummary">
+                                <div class="welcome-summary-item">
+                                    <span class="summary-number" id="summaryBookings">0</span>
+                                    <span class="summary-label">bookings today</span>
+                                </div>
+                                <div class="welcome-summary-divider"></div>
+                                <div class="welcome-summary-item">
+                                    <span class="summary-number" id="summaryRevenue">₹0</span>
+                                    <span class="summary-label">revenue this month</span>
+                                </div>
+                                <div class="welcome-summary-divider"></div>
+                                <div class="welcome-summary-item">
+                                    <span class="summary-number" id="summaryLogins">0</span>
+                                    <span class="summary-label">visitors logged in today</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
                     <!-- Stats Grid -->
                     <div class="admin-stats-grid" id="statsGrid">
@@ -192,34 +215,63 @@
                                 <p>Upcoming Bookings</p>
                             </div>
                         </div>
+                        <div class="admin-stat-card">
+                            <div class="admin-stat-icon teal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                    <polyline points="10 17 15 12 10 7"></polyline>
+                                    <line x1="15" y1="12" x2="3" y2="12"></line>
+                                </svg>
+                            </div>
+                            <div class="admin-stat-info">
+                                <h3 id="todayLogins">0</h3>
+                                <p>Logins Today</p>
+                            </div>
+                        </div>
                     </div>
                     
-                    <!-- Recent Bookings -->
-                    <div class="admin-card" style="margin-top: var(--space-8);">
-                        <div class="admin-card-header">
-                            <h3 class="admin-card-title">Recent Bookings</h3>
-                            <a href="#" class="btn-outline btn-sm" data-section="bookings">View All</a>
+                    <!-- Two-column layout: Recent Bookings + Login Activity -->
+                    <div class="admin-two-col">
+                        <!-- Recent Bookings -->
+                        <div class="admin-card">
+                            <div class="admin-card-header">
+                                <h3 class="admin-card-title">Recent Bookings</h3>
+                                <a href="#" class="btn-outline btn-sm" data-section="bookings">View All</a>
+                            </div>
+                            <div style="overflow-x: auto;">
+                                <table class="data-table" id="recentBookingsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Booking #</th>
+                                            <th>Customer</th>
+                                            <th>Pass</th>
+                                            <th>Date</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentBookingsBody">
+                                        <tr>
+                                            <td colspan="6" style="text-align: center; padding: var(--space-8);">
+                                                <div class="spinner"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div style="overflow-x: auto;">
-                            <table class="data-table" id="recentBookingsTable">
-                                <thead>
-                                    <tr>
-                                        <th>Booking #</th>
-                                        <th>Customer</th>
-                                        <th>Pass</th>
-                                        <th>Date</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="recentBookingsBody">
-                                    <tr>
-                                        <td colspan="6" style="text-align: center; padding: var(--space-8);">
-                                            <div class="spinner"></div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        
+                        <!-- Login Activity -->
+                        <div class="admin-card">
+                            <div class="admin-card-header">
+                                <h3 class="admin-card-title">Recent Visitor Activity</h3>
+                                <a href="#" class="btn-outline btn-sm" data-section="users">View All Users</a>
+                            </div>
+                            <div class="login-activity-list" id="loginActivityList">
+                                <div style="text-align: center; padding: var(--space-8);">
+                                    <div class="spinner"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -380,6 +432,26 @@
         </main>
     </div>
     
+    <!-- Booking Detail Modal -->
+    <div class="booking-detail-overlay" id="bookingDetailOverlay">
+        <div class="booking-detail-modal">
+            <div class="booking-detail-header">
+                <h3 class="booking-detail-title">Booking Details</h3>
+                <button class="booking-detail-close" id="closeBookingDetail">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="booking-detail-body" id="bookingDetailBody">
+                <div style="text-align: center; padding: var(--space-8);">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- JavaScript Files -->
     <script src="js/config.js"></script>
     <script src="js/supabase-client.js"></script>
@@ -401,7 +473,13 @@
             if (profile) {
                 document.getElementById('adminAvatar').textContent = profile.full_name?.charAt(0) || 'A';
                 document.getElementById('adminName').textContent = profile.full_name || 'Admin';
+                document.getElementById('welcomeName').textContent = profile.full_name?.split(' ')[0] || 'Admin';
             }
+            
+            // Set welcome date
+            document.getElementById('welcomeDate').textContent = new Date().toLocaleDateString('en-IN', {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+            });
             
             // Load dashboard data
             await loadDashboardData();
@@ -440,20 +518,47 @@
                 await logoutUser();
                 window.location.href = 'admin-login.html';
             });
+            
+            // Booking detail modal close
+            document.getElementById('closeBookingDetail').addEventListener('click', closeBookingDetailModal);
+            document.getElementById('bookingDetailOverlay').addEventListener('click', function(e) {
+                if (e.target === this) closeBookingDetailModal();
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeBookingDetailModal();
+            });
         });
         
         async function loadDashboardData() {
-            // Load stats
-            const statsResult = await fetchDashboardStats();
+            // Load stats, login stats, recent bookings, and login activity in parallel
+            const [statsResult, loginStatsResult] = await Promise.all([
+                fetchDashboardStats(),
+                fetchLoginStats()
+            ]);
+            
             if (statsResult.success) {
-                document.getElementById('todayBookings').textContent = statsResult.stats.today_bookings || 0;
-                document.getElementById('totalRevenue').textContent = '₹' + (statsResult.stats.total_revenue || 0).toLocaleString('en-IN');
-                document.getElementById('totalUsers').textContent = statsResult.stats.total_users || 0;
-                document.getElementById('upcomingBookings').textContent = statsResult.stats.upcoming_bookings || 0;
+                const s = statsResult.stats;
+                document.getElementById('todayBookings').textContent = s.today_bookings || 0;
+                document.getElementById('totalRevenue').textContent = '₹' + (s.total_revenue || 0).toLocaleString('en-IN');
+                document.getElementById('totalUsers').textContent = s.total_users || 0;
+                document.getElementById('upcomingBookings').textContent = s.upcoming_bookings || 0;
+                
+                // Welcome card summary
+                document.getElementById('summaryBookings').textContent = s.today_bookings || 0;
+                document.getElementById('summaryRevenue').textContent = '₹' + (s.total_revenue || 0).toLocaleString('en-IN');
             }
             
-            // Load recent bookings
-            await loadRecentBookings();
+            if (loginStatsResult.success) {
+                const ls = loginStatsResult.stats;
+                document.getElementById('todayLogins').textContent = ls.today_unique_users || 0;
+                document.getElementById('summaryLogins').textContent = ls.today_unique_users || 0;
+            }
+            
+            // Load recent bookings and login activity
+            await Promise.all([
+                loadRecentBookings(),
+                loadRecentLoginActivity()
+            ]);
         }
         
         async function loadRecentBookings() {
@@ -461,12 +566,12 @@
             const tbody = document.getElementById('recentBookingsBody');
             
             if (!result.success || !result.bookings?.length) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--color-text-muted);">No bookings found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--color-text-muted);">No bookings yet</td></tr>';
                 return;
             }
             
             tbody.innerHTML = result.bookings.map(b => `
-                <tr>
+                <tr class="clickable-row" onclick="openBookingDetail('${b.id}')">
                     <td><strong>${b.booking_number}</strong></td>
                     <td>
                         <div class="table-user">
@@ -482,6 +587,27 @@
                     <td>₹${b.total_amount.toLocaleString('en-IN')}</td>
                     <td><span class="table-status ${b.status === 'confirmed' ? 'success' : b.status === 'pending' ? 'warning' : b.status === 'cancelled' ? 'danger' : 'info'}">${b.status}</span></td>
                 </tr>
+            `).join('');
+        }
+        
+        async function loadRecentLoginActivity() {
+            const result = await fetchRecentLogins(10);
+            const container = document.getElementById('loginActivityList');
+            
+            if (!result.success || !result.logins?.length) {
+                container.innerHTML = '<div class="login-activity-empty">No login activity yet. Visitor logins will appear here.</div>';
+                return;
+            }
+            
+            container.innerHTML = result.logins.map(login => `
+                <div class="login-activity-item">
+                    <div class="login-activity-avatar">${login.full_name?.charAt(0) || 'U'}</div>
+                    <div class="login-activity-info">
+                        <span class="login-activity-name">${login.full_name || 'Unknown User'}</span>
+                        <span class="login-activity-email">${login.email || ''}</span>
+                    </div>
+                    <div class="login-activity-time">${getRelativeTime(login.login_at)}</div>
+                </div>
             `).join('');
         }
         
@@ -506,7 +632,7 @@
             }
             
             tbody.innerHTML = result.bookings.map(b => `
-                <tr>
+                <tr class="clickable-row" onclick="openBookingDetail('${b.id}')">
                     <td><strong>${b.booking_number}</strong></td>
                     <td>
                         <div class="table-user">
@@ -525,8 +651,8 @@
                     <td><span class="table-status ${b.status === 'confirmed' ? 'success' : b.status === 'pending' ? 'warning' : 'danger'}">${b.status}</span></td>
                     <td>
                         <div class="table-actions">
-                            ${b.status === 'confirmed' ? `<button class="table-action-btn" onclick="markCompleted('${b.id}')" title="Mark Completed">✓</button>` : ''}
-                            ${b.status === 'pending' || b.status === 'confirmed' ? `<button class="table-action-btn" onclick="cancelAdminBooking('${b.id}')" title="Cancel">✕</button>` : ''}
+                            ${b.status === 'confirmed' ? `<button class="table-action-btn" onclick="event.stopPropagation(); markCompleted('${b.id}')" title="Mark Completed">✓</button>` : ''}
+                            ${b.status === 'pending' || b.status === 'confirmed' ? `<button class="table-action-btn" onclick="event.stopPropagation(); cancelAdminBooking('${b.id}')" title="Cancel">✕</button>` : ''}
                         </div>
                     </td>
                 </tr>
@@ -621,7 +747,6 @@
             };
             
             const result = await fetchAllBookings(filters);
-            // Re-render table with filtered data
             const tbody = document.getElementById('allBookingsBody');
             
             if (!result.success || !result.bookings?.length) {
@@ -629,8 +754,33 @@
                 return;
             }
             
-            // Same rendering logic as loadAllBookingsData
-            loadAllBookingsData();
+            // Re-render with filtered data
+            tbody.innerHTML = result.bookings.map(b => `
+                <tr class="clickable-row" onclick="openBookingDetail('${b.id}')">
+                    <td><strong>${b.booking_number}</strong></td>
+                    <td>
+                        <div class="table-user">
+                            <div class="table-avatar">${b.user_name?.charAt(0) || 'U'}</div>
+                            <div class="table-user-info">
+                                <span class="table-user-name">${b.user_name}</span>
+                                <span class="table-user-email">${b.user_email}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${b.pass_name}</td>
+                    <td>${formatDate(b.visit_date, { weekday: undefined })}</td>
+                    <td>${b.total_guests}</td>
+                    <td>₹${b.total_amount.toLocaleString('en-IN')}</td>
+                    <td><span class="table-status ${b.payment_status === 'successful' ? 'success' : 'warning'}">${b.payment_status || 'pending'}</span></td>
+                    <td><span class="table-status ${b.status === 'confirmed' ? 'success' : b.status === 'pending' ? 'warning' : 'danger'}">${b.status}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            ${b.status === 'confirmed' ? `<button class="table-action-btn" onclick="event.stopPropagation(); markCompleted('${b.id}')" title="Mark Completed">✓</button>` : ''}
+                            ${b.status === 'pending' || b.status === 'confirmed' ? `<button class="table-action-btn" onclick="event.stopPropagation(); cancelAdminBooking('${b.id}')" title="Cancel">✕</button>` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
         }
         
         async function markCompleted(bookingId) {
@@ -670,6 +820,169 @@
                 showToast(result.error, 'error');
                 loadAllPassesData(); // Revert
             }
+        }
+        
+        // =====================================================
+        // BOOKING DETAIL MODAL
+        // =====================================================
+        
+        async function openBookingDetail(bookingId) {
+            const overlay = document.getElementById('bookingDetailOverlay');
+            const body = document.getElementById('bookingDetailBody');
+            
+            overlay.classList.add('show');
+            body.innerHTML = '<div style="text-align: center; padding: var(--space-8);"><div class="spinner"></div><p style="margin-top: var(--space-4); color: var(--color-text-muted);">Loading booking details...</p></div>';
+            
+            const result = await fetchBookingDetail(bookingId);
+            
+            if (!result.success) {
+                body.innerHTML = `<div style="text-align: center; padding: var(--space-8); color: var(--color-text-muted);">Failed to load booking details. ${result.error || ''}</div>`;
+                return;
+            }
+            
+            const b = result.booking;
+            const p = result.payment;
+            const logs = result.logs;
+            
+            const statusClass = b.status === 'confirmed' ? 'success' : b.status === 'pending' ? 'warning' : b.status === 'cancelled' ? 'danger' : 'info';
+            const paymentStatusClass = p?.status === 'successful' ? 'success' : p?.status === 'failed' ? 'danger' : 'warning';
+            
+            body.innerHTML = `
+                <div class="detail-section">
+                    <div class="detail-row-header">
+                        <h4>Booking #${b.booking_number}</h4>
+                        <span class="table-status ${statusClass}">${b.status}</span>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4 class="detail-section-title">Customer Information</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Name</span>
+                            <span class="detail-value">${b.profiles?.full_name || 'N/A'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Email</span>
+                            <span class="detail-value">${b.profiles?.email || 'N/A'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Phone</span>
+                            <span class="detail-value">${b.profiles?.phone || 'N/A'}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-section">
+                    <h4 class="detail-section-title">Booking Information</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Pass Type</span>
+                            <span class="detail-value">${b.passes?.name || 'N/A'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Visit Date</span>
+                            <span class="detail-value">${formatDate(b.visit_date)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Adults</span>
+                            <span class="detail-value">${b.num_adults}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Children</span>
+                            <span class="detail-value">${b.num_children || 0}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Total Guests</span>
+                            <span class="detail-value">${b.total_guests}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Booked On</span>
+                            <span class="detail-value">${formatDateTime(b.created_at)}</span>
+                        </div>
+                    </div>
+                    ${b.special_requests ? `
+                    <div class="detail-item" style="margin-top: var(--space-4);">
+                        <span class="detail-label">Special Requests</span>
+                        <span class="detail-value">${sanitizeHTML(b.special_requests)}</span>
+                    </div>` : ''}
+                    ${b.dietary_preferences ? `
+                    <div class="detail-item" style="margin-top: var(--space-2);">
+                        <span class="detail-label">Dietary Preferences</span>
+                        <span class="detail-value">${sanitizeHTML(b.dietary_preferences)}</span>
+                    </div>` : ''}
+                </div>
+                
+                <div class="detail-section">
+                    <h4 class="detail-section-title">Payment Details</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Base Amount</span>
+                            <span class="detail-value">₹${(b.base_amount || 0).toLocaleString('en-IN')}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Tax</span>
+                            <span class="detail-value">₹${(b.tax_amount || 0).toLocaleString('en-IN')}</span>
+                        </div>
+                        <div class="detail-item detail-item-highlight">
+                            <span class="detail-label">Total Amount</span>
+                            <span class="detail-value detail-value-large">₹${(b.total_amount || 0).toLocaleString('en-IN')}</span>
+                        </div>
+                        ${p ? `
+                        <div class="detail-item">
+                            <span class="detail-label">Payment Status</span>
+                            <span class="table-status ${paymentStatusClass}">${p.status}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Razorpay ID</span>
+                            <span class="detail-value">${p.razorpay_payment_id || 'N/A'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Payment Method</span>
+                            <span class="detail-value">${p.payment_method || 'N/A'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Payment Date</span>
+                            <span class="detail-value">${formatDateTime(p.created_at)}</span>
+                        </div>
+                        ` : '<div class="detail-item"><span class="detail-label">Payment</span><span class="detail-value" style="color: var(--color-text-muted);">No payment recorded</span></div>'}
+                    </div>
+                </div>
+                
+                ${b.qr_code_url ? `
+                <div class="detail-section">
+                    <h4 class="detail-section-title">QR Code</h4>
+                    <div class="detail-qr">
+                        <img src="${b.qr_code_url}" alt="Booking QR Code" class="detail-qr-img">
+                    </div>
+                </div>` : ''}
+                
+                ${logs && logs.length > 0 ? `
+                <div class="detail-section">
+                    <h4 class="detail-section-title">Activity Log</h4>
+                    <div class="detail-timeline">
+                        ${logs.map(log => `
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <span class="timeline-action">${log.action.replace(/_/g, ' ')}</span>
+                                    ${log.notes ? `<span class="timeline-notes">${sanitizeHTML(log.notes)}</span>` : ''}
+                                    <span class="timeline-time">${getRelativeTime(log.created_at)}</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>` : ''}
+                
+                <div class="detail-actions">
+                    ${b.status === 'confirmed' ? `<button class="btn-primary btn-sm" onclick="markCompleted('${b.id}'); closeBookingDetailModal();">Mark Completed</button>` : ''}
+                    ${b.status === 'pending' || b.status === 'confirmed' ? `<button class="btn-outline btn-sm" style="color: #DC3545; border-color: #DC3545;" onclick="cancelAdminBooking('${b.id}'); closeBookingDetailModal();">Cancel Booking</button>` : ''}
+                </div>
+            `;
+        }
+        
+        function closeBookingDetailModal() {
+            document.getElementById('bookingDetailOverlay').classList.remove('show');
         }
     </script>
 </body>
