@@ -66,11 +66,15 @@
         display: flex;
         z-index: 9999;
         position: relative;
+        flex-shrink: 0;
+        margin-left: var(--space-4);
     }
     
     .nav-actions {
         z-index: 9999;
         position: relative;
+        flex-shrink: 0;
+        margin-left: auto;
     }
     
     .nav-actions .phone-link {
@@ -82,6 +86,7 @@
         display: inline-flex;
         font-size: var(--text-xs);
         padding: var(--space-2) var(--space-4);
+        white-space: nowrap;
     }
     
     .activities-grid,
@@ -200,20 +205,21 @@
         --text-5xl: 2rem;
         --text-4xl: 1.75rem;
         --text-3xl: 1.5rem;
-    }
-    
-    .nav-actions .btn-primary {
-        font-size: var(--text-xs);
-        padding: var(--space-2) var(--space-3);
-        white-space: nowrap;
         --container-padding: 1rem;
         --space-24: 3rem;
         --space-20: 2.5rem;
         --space-16: 2rem;
     }
     
+    .nav-actions .btn-primary {
+        font-size: 0.65rem;
+        padding: 0.4rem 0.6rem;
+        white-space: nowrap;
+        letter-spacing: 0.5px;
+    }
+    
     .nav-brand .logo {
-        font-size: var(--text-xl);
+        font-size: 1.1rem;
     }
     
     .hero-content {
@@ -262,6 +268,15 @@
 @media (max-width: 360px) {
     :root {
         --text-hero: 2rem;
+    }
+    
+    .nav-brand .logo {
+        font-size: 1rem;
+    }
+    
+    .nav-actions .btn-primary {
+        font-size: 0.6rem;
+        padding: 0.35rem 0.5rem;
     }
     
     .hero-buttons .btn-large {
