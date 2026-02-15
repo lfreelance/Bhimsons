@@ -103,6 +103,20 @@
     <script src="js/auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
+            // Check if arriving from email verification (URL contains access_token)
+            const hash = window.location.hash;
+            const isEmailVerification = hash && hash.includes('access_token');
+            
+            if (isEmailVerification) {
+                // Wait briefly for Supabase to process the token
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                showToast('Email verified successfully! Welcome to Bhimson\'s Agro Park!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'select-pass.html';
+                }, 2000);
+                return;
+            }
+            
             // Redirect if already logged in
             await redirectIfLoggedIn('select-pass.html');
             

@@ -20,7 +20,8 @@ async function registerUser(email, password, fullName, phone) {
                 data: {
                     full_name: fullName,
                     phone: phone
-                }
+                },
+                emailRedirectTo: `${window.location.origin}/login.html`
             }
         });
 
@@ -48,9 +49,21 @@ async function registerUser(email, password, fullName, phone) {
         };
     } catch (error) {
         console.error('Registration error:', error);
+        
+        // Handle rate limit errors specifically
+        let errorMessage = error.message || 'Registration failed';
+        
+        if (errorMessage.toLowerCase().includes('rate limit') || 
+            errorMessage.toLowerCase().includes('email rate limit')) {
+            errorMessage = 'Email sending limit reached. Please wait a few minutes and try again, or contact support.';
+        } else if (errorMessage.toLowerCase().includes('already registered') || 
+                   errorMessage.toLowerCase().includes('user already registered')) {
+            errorMessage = 'This email is already registered. Please try logging in instead.';
+        }
+        
         return {
             success: false,
-            error: error.message || 'Registration failed'
+            error: errorMessage
         };
     }
 }

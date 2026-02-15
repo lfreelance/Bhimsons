@@ -1,0 +1,21 @@
+{
+    "name": "Bhimsons Agro Park",
+    "short_name": "Bhimsons Agro",
+    "description": "Maharashtra's premier agro-tourism park offering adventure-filled experiences",
+    "icons": [
+        {
+            "src": "/images/Bhimsonslogo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/Bhimsonslogo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#F5A623",
+    "background_color": "#0D0D0D",
+    "display": "standalone",
+    "start_url": "/"
+}

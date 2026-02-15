@@ -245,11 +245,14 @@
                         }, 2000);
                     } else {
                         console.error('Registration failed:', result.error);
-                        // Show more helpful error messages
                         let errorMsg = result.error || 'Registration failed';
-                        if (errorMsg.includes('already registered')) {
-                            errorMsg = 'This email is already registered. Try logging in instead.';
+                        
+                        // Show helpful message for rate limit errors
+                        if (errorMsg.toLowerCase().includes('rate limit') || 
+                            errorMsg.toLowerCase().includes('email rate limit')) {
+                            errorMsg = 'Email sending limit reached. Please wait 15-30 minutes and try again. If this persists, contact support at bhimsonsagropark@gmail.com';
                         }
+                        
                         showToast(errorMsg, 'error');
                         hideLoading(registerBtn);
                     }
