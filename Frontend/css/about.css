@@ -36,7 +36,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.65);
     z-index: 1;
 }
 
@@ -76,7 +76,7 @@
 /* Our Story Section */
 .about-story {
     background: var(--color-bg-dark);
-    padding: var(--space-24) 0;
+    padding: var(--space-16) 0;
 }
 
 .story-grid {
@@ -152,14 +152,14 @@
 /* What We Offer Section */
 .about-offerings {
     background: var(--color-bg-section);
-    padding: var(--space-24) 0;
+    padding: var(--space-16) 0;
 }
 
 .offerings-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-8);
-    margin-top: var(--space-12);
+    margin-top: var(--space-8);
 }
 
 .offering-card {
@@ -191,6 +191,10 @@
     object-fit: cover;
 }
 
+.offering-image-farm img {
+    object-position: center 30%;
+}
+
 .offering-title {
     font-family: var(--font-display);
     font-size: var(--text-2xl);
@@ -209,14 +213,14 @@
 /* Why Choose Us Section */
 .about-why {
     background: var(--color-bg-dark);
-    padding: var(--space-24) 0;
+    padding: var(--space-16) 0;
 }
 
 .why-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-8);
-    margin-top: var(--space-12);
+    margin-top: var(--space-8);
 }
 
 .why-item {
@@ -261,14 +265,14 @@
 /* Location Section */
 .about-location {
     background: var(--color-bg-section);
-    padding: var(--space-24) 0;
+    padding: var(--space-16) 0;
 }
 
 .location-grid {
     display: grid;
     grid-template-columns: 1fr 1.5fr;
     gap: var(--space-10);
-    margin-top: var(--space-12);
+    margin-top: var(--space-8);
     align-items: stretch;
 }
 
@@ -355,7 +359,7 @@
 /* CTA Section */
 .about-cta {
     background: var(--color-bg-dark);
-    padding: var(--space-24) 0;
+    padding: var(--space-16) 0;
     position: relative;
     overflow: hidden;
 }
