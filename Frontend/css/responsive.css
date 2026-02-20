@@ -91,7 +91,8 @@
     
     .activities-grid,
     .passes-grid,
-    .testimonials-grid {
+    .testimonials-grid,
+    .reels-grid {
         grid-template-columns: repeat(2, 1fr);
     }
     
@@ -146,7 +147,8 @@
     }
     
     .activities-grid,
-    .testimonials-grid {
+    .testimonials-grid,
+    .reels-grid {
         grid-template-columns: 1fr;
         gap: var(--space-6);
     }
