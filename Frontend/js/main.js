@@ -7,33 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initMobileMenu();
     initSmoothScroll();
     initHeaderScroll();
-    initReelHover();
 });
-
-/* ===================================
-   Reel Hover to Play (muted)
-   =================================== */
-function initReelHover() {
-    document.querySelectorAll('[data-reel]').forEach(function(item) {
-        const video = item.querySelector('.reel-video');
-        if (!video) return;
-
-        item.addEventListener('mouseenter', function() {
-            video.play().catch(function() {});
-        });
-        item.addEventListener('mouseleave', function() {
-            video.pause();
-        });
-
-        item.addEventListener('click', function() {
-            if (video.paused) {
-                video.play().catch(function() {});
-            } else {
-                video.pause();
-            }
-        });
-    });
-}
 
 /* ===================================
    Mobile Menu Toggle
